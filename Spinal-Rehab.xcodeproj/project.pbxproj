@@ -6,6 +6,13 @@
 	objectVersion = 77;
 	objects = {
 
+/* Begin PBXBuildFile section */
+		639349C32FD282FB007CFD53 /* SimpleKeychain in Frameworks */ = {isa = PBXBuildFile; productRef = 639349C22FD282FB007CFD53 /* SimpleKeychain */; };
+		639349C62FD2837D007CFD53 /* PostgresNIO in Frameworks */ = {isa = PBXBuildFile; productRef = 639349C52FD2837D007CFD53 /* PostgresNIO */; };
+		639349C82FD2837D007CFD53 /* _ConnectionPoolModule in Frameworks */ = {isa = PBXBuildFile; productRef = 639349C72FD2837D007CFD53 /* _ConnectionPoolModule */; };
+		639349CA2FD2837D007CFD53 /* _ConnectionPoolTestUtils in Frameworks */ = {isa = PBXBuildFile; productRef = 639349C92FD2837D007CFD53 /* _ConnectionPoolTestUtils */; };
+/* End PBXBuildFile section */
+
 /* Begin PBXContainerItemProxy section */
 		639349032FD281EF007CFD53 /* PBXContainerItemProxy */ = {
 			isa = PBXContainerItemProxy;
@@ -52,6 +59,10 @@
 			isa = PBXFrameworksBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
+				639349C82FD2837D007CFD53 /* _ConnectionPoolModule in Frameworks */,
+				639349C62FD2837D007CFD53 /* PostgresNIO in Frameworks */,
+				639349CA2FD2837D007CFD53 /* _ConnectionPoolTestUtils in Frameworks */,
+				639349C32FD282FB007CFD53 /* SimpleKeychain in Frameworks */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
@@ -112,6 +123,10 @@
 			);
 			name = "Spinal-Rehab";
 			packageProductDependencies = (
+				639349C22FD282FB007CFD53 /* SimpleKeychain */,
+				639349C52FD2837D007CFD53 /* PostgresNIO */,
+				639349C72FD2837D007CFD53 /* _ConnectionPoolModule */,
+				639349C92FD2837D007CFD53 /* _ConnectionPoolTestUtils */,
 			);
 			productName = "Spinal-Rehab";
 			productReference = 639348F52FD281EE007CFD53 /* Spinal-Rehab.app */;
@@ -195,6 +210,10 @@
 			);
 			mainGroup = 639348EC2FD281EE007CFD53;
 			minimizedProjectReferenceProxies = 1;
+			packageReferences = (
+				639349C12FD282FB007CFD53 /* XCRemoteSwiftPackageReference "SimpleKeychain" */,
+				639349C42FD2837D007CFD53 /* XCRemoteSwiftPackageReference "postgres-nio" */,
+			);
 			preferredProjectObjectVersion = 77;
 			productRefGroup = 639348F62FD281EE007CFD53 /* Products */;
 			projectDirPath = "";
@@ -573,6 +592,48 @@
 			defaultConfigurationName = Release;
 		};
 /* End XCConfigurationList section */
+
+/* Begin XCRemoteSwiftPackageReference section */
+		639349C12FD282FB007CFD53 /* XCRemoteSwiftPackageReference "SimpleKeychain" */ = {
+			isa = XCRemoteSwiftPackageReference;
+			repositoryURL = "https://github.com/auth0/SimpleKeychain.git";
+			requirement = {
+				kind = upToNextMajorVersion;
+				minimumVersion = 1.3.0;
+			};
+		};
+		639349C42FD2837D007CFD53 /* XCRemoteSwiftPackageReference "postgres-nio" */ = {
+			isa = XCRemoteSwiftPackageReference;
+			repositoryURL = "https://github.com/vapor/postgres-nio.git";
+			requirement = {
+				kind = upToNextMajorVersion;
+				minimumVersion = 1.33.0;
+			};
+		};
+/* End XCRemoteSwiftPackageReference section */
+
+/* Begin XCSwiftPackageProductDependency section */
+		639349C22FD282FB007CFD53 /* SimpleKeychain */ = {
+			isa = XCSwiftPackageProductDependency;
+			package = 639349C12FD282FB007CFD53 /* XCRemoteSwiftPackageReference "SimpleKeychain" */;
+			productName = SimpleKeychain;
+		};
+		639349C52FD2837D007CFD53 /* PostgresNIO */ = {
+			isa = XCSwiftPackageProductDependency;
+			package = 639349C42FD2837D007CFD53 /* XCRemoteSwiftPackageReference "postgres-nio" */;
+			productName = PostgresNIO;
+		};
+		639349C72FD2837D007CFD53 /* _ConnectionPoolModule */ = {
+			isa = XCSwiftPackageProductDependency;
+			package = 639349C42FD2837D007CFD53 /* XCRemoteSwiftPackageReference "postgres-nio" */;
+			productName = _ConnectionPoolModule;
+		};
+		639349C92FD2837D007CFD53 /* _ConnectionPoolTestUtils */ = {
+			isa = XCSwiftPackageProductDependency;
+			package = 639349C42FD2837D007CFD53 /* XCRemoteSwiftPackageReference "postgres-nio" */;
+			productName = _ConnectionPoolTestUtils;
+		};
+/* End XCSwiftPackageProductDependency section */
 	};
 	rootObject = 639348ED2FD281EE007CFD53 /* Project object */;
 }

@@ -1,0 +1,93 @@
+//
+//  Untitled.swift
+//  KPRC-Payroll
+//
+//  Created by Hari Dass Khalsa on 1/19/26.
+//
+
+                if let index = timeViewList.firstIndex(where: { $0.id == selectedID }) {
+                            selectedIndex = index
+                            print("Selected index is: \(index)")
+                        }
+                    } else {
+                        selectedIndex = nil
+                        print("No item selected")
+                    }
+
+
+SELECT namelink, emp_id , sum(totaltime) as ttsubtotal, sum(massagehrs) as mssubtotal
+from time
+WHERE time_date >= '2026/02/01' and time_date < '2026/02/16'
+Group by
+namelink , emp_id
+order by
+namelink , emp_id
+
+
+
+SELECT CONCAT(employees.firstname,' ',employees.lastname) as fullname,
+time.emp_id , sum(time.totaltime) as ttsubtotal,
+sum(time.massagehrs) as mssubtotal
+from time
+INNER JOIN employees ON time.emp_id = employees.employee_id
+WHERE time.time_date >= '2026/02/01' and time.time_date < '2026/02/16'
+Group by
+employees.firstname, employees.lastname , time.emp_id
+order by
+employees.firstname, employees.lastname , time.emp_id
+
+
+
+SELECT CONCAT(employees.firstname,' ',employees.lastname) as fullname,
+time.emp_id , sum(time.totaltime) as ttsubtotal,
+sum(time.massagehrs) as mssubtotal,
+employees.payrate, employees.bonuspermassageunit , employees.oregonsaves, employees.vacperpayperiod,
+employees.sicktimeperpp
+from time
+INNER JOIN employees ON time.emp_id = employees.employee_id
+WHERE time.time_date >= '2026/02/01' and time.time_date < '2026/02/16'
+Group by
+employees.firstname, employees.lastname , time.emp_id,employees.payrate, employees.bonuspermassageunit , employees.oregonsaves, employees.vacperpayperiod,
+employees.sicktimeperpp
+order by
+employees.firstname, employees.lastname , time.emp_id, employees.payrate, employees.bonuspermassageunit , employees.oregonsaves, employees.vacperpayperiod,
+employees.sicktimeperpp
+
+
+
+    mutating func reset(){
+        
+         id = 0
+         employeeID = 0
+        payDateID = 0
+         epdate = Date()
+         chkNum = 0
+         name = ""
+         hours = 0
+         payRate = 0
+         totalGross = 0
+         salaried: Bool = false
+         netPay = 0
+         holidayHours = 0
+         massageUnits = 0
+         therapyUnits = 0
+         bonusAmt = 0
+         garnishment = 0
+         healthInsDraws = 0
+         draws = 0
+         fwt = 0
+         swt = 0
+         fica = 0
+         medicare = 0
+         unEmployment = 0
+         transitTax = 0
+         orSaves = 0
+         orFML = 0
+         vacTimeAdded = 0
+         vacTimeUsed = 0
+         sickTimeAdded = 0
+         sickTimeUsed = 0
+         note = ""
+         dataDict : DictListType = [:]
+        
+    }
