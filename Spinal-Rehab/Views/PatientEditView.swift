@@ -9,35 +9,76 @@ import SwiftUI
 
 struct PatientEditView: View {
     @Binding var patient: PatientData
+    @State private var originalPatient = PatientData()
     @Environment(\.dismiss) var dismiss
     @EnvironmentObject var globalData: globalDataRec
+    
+    init(patient: Binding<PatientData>){
+        _patient = patient
+        originalPatient = patient.wrappedValue
+        
+    }
   
     var body: some View {
-        VStack{
+        VStack(alignment: .leading, spacing: 15) {
+            Text("Patient Information")
+                .font(.title)
+                .padding(.horizontal)
             Form{
                 HStack{
+                    TextField("First Name", text: $patient.firstname)
+                    TextField("Last Name", text: $patient.lastname)
+                }
+                TextField("Street", text: $patient.street)
+                HStack{
+                    TextField("City", text: $patient.city)
+                    TextField("State", text: $patient.state)
+                    TextField("Zip", text: $patient.zip)
+                }
+                HStack{
+                    TextField("Phone", text: $patient.phone)
+                    TextField("Email", text: $patient.email)
+                }
+                TextField("Gender", text: $patient.gender)
+                HStack{
+                    DateTextField("Birthday", selection: $patient.dob)
+                    TextField("Age", value: $patient.age, format: .number)
+                }
+                HStack{
+                    Spacer()
                     Button("Save") {
+                        SaveRecord()
+                        originalPatient = patient
                         dismiss()
-
                     }
                     Button("Cancel") {
                         // setField()
                         //resetTimeForm()
+                        patient = originalPatient
                         dismiss()
                         //Temp()
-                        
                     }
-                }.padding(10)
-                HStack{
-                    TextField("First Name", text: $patient.firstname)
-                      TextField("Last Name", text: $patient.lastname)
-                }.padding(10)
+                    .disabled(patient == originalPatient)
+                    Spacer()
+                }.frame(alignment: .center)
             }
-            .frame(width: 400    )
-            //Form
-            //  Text(patient.fullname)
+            
+            .frame(width: 400)
+            .environment(\.layoutDirection, .leftToRight)  // already default
+            // or, on macOS 13+:
+            .formStyle(.grouped)
             Spacer()
         }
+      //  .frame(maxWidth: .infinity, maxHeight: .infinity, alignment: .topLeading)
+    }
+    
+   func SaveRecord(){
+       Task{
+           var localPatient = patient
+           await localPatient.saveRec()
+           patient = localPatient
+       }
+
     }
 }
 

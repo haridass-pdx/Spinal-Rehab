@@ -43,7 +43,9 @@ struct ContentView: View {
         }  // NavSplit
         detail: {
             if(patientRecord.id != 0) {
-             PatientEditView(patient: $patientRecord)
+                NavigationStack {
+                    PatientEditView(patient: $patientRecord)
+                }
             }
             else {
                 Text("No Record Selected")

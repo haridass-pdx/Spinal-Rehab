@@ -94,7 +94,7 @@ struct PatientData: Identifiable, Equatable, Hashable{
     mutating func saveRec() async {
         self.recToDict()
         let ptC = patientClass()
-        _ = await ptC.saveDictionary(dict: self.dataDict)
+       id = await ptC.saveDictionary(dict: self.dataDict)
     }
     
     

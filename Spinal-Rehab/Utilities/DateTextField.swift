@@ -10,24 +10,26 @@ import SwiftUI
 import SwiftUI
 
 struct DateTextField: View {
-    @Binding  var eventDate: Date
-    //= Date() // (1) Bind to a Date instance
-    
-    let dateFormatter: DateFormatter = {
-            let formatter = DateFormatter()
-            formatter.dateStyle = .short // e.g., "12/18/2025"
-            formatter.timeStyle = .none
-            return formatter
-        }()
+    let label: String
+    @Binding var selection: Date?
 
+    let dateFormatter: DateFormatter = {
+        let formatter = DateFormatter()
+        formatter.dateStyle = .short // e.g., "12/18/2025"
+        formatter.timeStyle = .none
+        return formatter
+    }()
+
+    init(_ label: String, selection: Binding<Date?>) {
+        self.label = label
+        self._selection = selection
+    }
 
     var body: some View {
-        VStack {
-            TextField("Enter date (MM/dd/yyyy)", value: $eventDate, formatter: dateFormatter) // (2)
+        HStack(alignment: .center) {
+            Text("\(label): ").bold().padding(.leading)
+            TextField("MM/dd/yyyy", value: $selection, formatter: dateFormatter)
                 .textFieldStyle(.roundedBorder)
-                .padding()
-
-           //  Text("Stored Date Object: \(eventDate.description)") // (3)
         }
     }
 }
