@@ -8,16 +8,16 @@
 import SwiftUI
 import SimpleKeychain
 
-let pwKey = "nmpw"
+let pwKey = "srpw"
 struct DefaultRec: Codable{
     var hostString: String = "localhost"
-    var pastHosts  = ["", "localhost"]
+    var pastHosts  = ["localhost"]
     
 }
 
 struct logData: Codable{
-    var username: String = "haridass"
-    var password: String = "3108"
+    var username: String = ""
+    var password: String = ""
 }
 
 struct logInRec{
@@ -25,7 +25,7 @@ struct logInRec{
     var username: String = "" //= "haridass" // remove
     var password: String   = "" // = "3108"       // remove
     
-    var database: String = "payroll_kprc"
+    var database: String = "spinal_rehab"
     
 }
 
@@ -109,7 +109,9 @@ struct LogInIView: View {
                             globalData.loggedIn = true
                             defaultRec.hostString = logInLocal.host
                             
-                            if selectedServer == "other" {
+                            if selectedServer == "other",
+                               !otherServer.isEmpty,
+                               !defaultRec.pastHosts.contains(otherServer) {
                                 defaultRec.pastHosts.append(otherServer)
                             }
                             
@@ -149,8 +151,18 @@ struct LogInIView: View {
     static func getUserDefaults() -> DefaultRec {
         if let data = UserDefaults.standard.data(forKey: UserDefaultKey) {
             let decoder = JSONDecoder()
-            guard let decoded = try? decoder.decode(DefaultRec.self, from: data) else {
+            guard var decoded = try? decoder.decode(DefaultRec.self, from: data) else {
                 fatalError("Failed to decode DefaultRec from saved data.")
+            }
+            // Drop empties and duplicates while preserving order
+            var seen = Set<String>()
+            decoded.pastHosts = decoded.pastHosts.filter { host in
+                guard !host.isEmpty, !seen.contains(host) else { return false }
+                seen.insert(host)
+                return true
+            }
+            if let encoded = try? JSONEncoder().encode(decoded) {
+                UserDefaults.standard.set(encoded, forKey: UserDefaultKey)
             }
             return decoded
         } else {
