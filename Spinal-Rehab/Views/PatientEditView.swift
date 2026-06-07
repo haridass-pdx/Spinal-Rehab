@@ -12,7 +12,7 @@ struct PatientEditView: View {
     @State private var originalPatient = PatientData()
     @Environment(\.dismiss) var dismiss
     @EnvironmentObject var globalData: globalDataRec
-    
+   
     init(patient: Binding<PatientData>){
         _patient = patient
         originalPatient = patient.wrappedValue
@@ -67,9 +67,11 @@ struct PatientEditView: View {
             .environment(\.layoutDirection, .leftToRight)  // already default
             // or, on macOS 13+:
             .formStyle(.grouped)
-            Spacer()
+           
         }
-      //  .frame(maxWidth: .infinity, maxHeight: .infinity, alignment: .topLeading)
+        .padding(10)
+        TestDateListView(patient: $patient)
+        Spacer()
     }
     
    func SaveRecord(){

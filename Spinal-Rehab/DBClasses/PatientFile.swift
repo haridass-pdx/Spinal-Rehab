@@ -8,33 +8,7 @@
 import Foundation
 import PostgresNIO
 
-class patientClass: pgClientClass {
-    
-    init(doAlert: AlertManager? = nil){
-        super.init(doAlert: doAlert,
-                   tName: "patients",
-                   pkField: "id")
-    }
 
-    func buildPatientist() async -> [PatientData]{
-        var text: String = ""
-        var result: [PatientData] = []
-        text = "SELECT * FROM public.patients  ORDER BY id DESC ;"
-        
-        await executeQuery(text: text)
-        var thePatient = PatientData() // = EmployeeData()
-        
-        for person in dictList{
-            thePatient.dictToRec(dict: person)
-            result.append(thePatient)
-        }
-        
-
-     
-        return result
-    }
-
-}
 
 struct PatientData: Identifiable, Equatable, Hashable{
     var id: Int = 0
@@ -144,4 +118,32 @@ struct PatientData: Identifiable, Equatable, Hashable{
         self.dataDict = localDict
         
     }
+}
+
+class patientClass: pgClientClass {
+    
+    init(doAlert: AlertManager? = nil){
+        super.init(doAlert: doAlert,
+                   tName: "patients",
+                   pkField: "id")
+    }
+
+    func buildPatientist() async -> [PatientData]{
+        var text: String = ""
+        var result: [PatientData] = []
+        text = "SELECT * FROM public.patients  ORDER BY id DESC ;"
+        
+        await executeQuery(text: text)
+        var thePatient = PatientData() // = EmployeeData()
+        
+        for person in dictList{
+            thePatient.dictToRec(dict: person)
+            result.append(thePatient)
+        }
+        
+
+     
+        return result
+    }
+
 }
