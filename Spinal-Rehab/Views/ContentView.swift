@@ -43,19 +43,14 @@ struct ContentView: View {
         }  // NavSplit
         detail: {
             if(patientRecord.id != 0) {
-               PatientEditView(patient: $patientRecord)
+             PatientEditView(patient: $patientRecord)
             }
             else {
                 Text("No Record Selected")
 
             }
-                    }
-        Image(systemName: "globe")
-            .imageScale(.large)
-            .foregroundStyle(.tint)
-        Text("Hello, world!")
-            padding(10)
-
+        }
+      //  .onAppear { print("[ContentView] onAppear") }
     } // body
       
     

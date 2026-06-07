@@ -28,20 +28,25 @@ class AlertManager: ObservableObject {
 
 @main
 struct Spinal_RehabApp: App {
-    @StateObject private var globalData = globalDataRec()
-
     var body: some Scene {
         WindowGroup {
-            if(globalData.loggedIn == false){
-                LogInIView()
-                    .environmentObject(globalData)
-            }
-            else{
-                ContentView()
-                    .environmentObject(globalData)
-            }
-
-
+            RootView()
         }
+    }
+}
+
+struct RootView: View {
+    @StateObject private var globalData = globalDataRec()
+
+    var body: some View {
+        let _ = print("[RootView] body re-evaluating, loggedIn = \(globalData.loggedIn)")
+        return Group {
+            if globalData.loggedIn {
+                ContentView()
+            } else {
+                LogInIView()
+            }
+        }
+        .environmentObject(globalData)
     }
 }

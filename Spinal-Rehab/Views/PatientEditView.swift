@@ -9,9 +9,35 @@ import SwiftUI
 
 struct PatientEditView: View {
     @Binding var patient: PatientData
+    @Environment(\.dismiss) var dismiss
+    @EnvironmentObject var globalData: globalDataRec
+  
     var body: some View {
-        Text(/*@START_MENU_TOKEN@*/"Hello, World!"/*@END_MENU_TOKEN@*/)
-        Text(patient.fullname)
+        VStack{
+            Form{
+                HStack{
+                    Button("Save") {
+                        dismiss()
+
+                    }
+                    Button("Cancel") {
+                        // setField()
+                        //resetTimeForm()
+                        dismiss()
+                        //Temp()
+                        
+                    }
+                }.padding(10)
+                HStack{
+                    TextField("First Name", text: $patient.firstname)
+                      TextField("Last Name", text: $patient.lastname)
+                }.padding(10)
+            }
+            .frame(width: 400    )
+            //Form
+            //  Text(patient.fullname)
+            Spacer()
+        }
     }
 }
 
