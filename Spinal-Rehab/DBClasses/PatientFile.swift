@@ -131,7 +131,7 @@ class patientClass: pgClientClass {
     func buildPatientist() async -> [PatientData]{
         var text: String = ""
         var result: [PatientData] = []
-        text = "SELECT * FROM public.patients  ORDER BY id DESC ;"
+        text = "SELECT * FROM public.patients  ORDER BY id ASC ;"
         
         await executeQuery(text: text)
         var thePatient = PatientData() // = EmployeeData()

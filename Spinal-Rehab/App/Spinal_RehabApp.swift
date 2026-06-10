@@ -39,7 +39,7 @@ struct RootView: View {
     @StateObject private var globalData = globalDataRec()
 
     var body: some View {
-        let _ = print("[RootView] body re-evaluating, loggedIn = \(globalData.loggedIn)")
+        //      let _ = print("[RootView] body re-evaluating, loggedIn = \(globalData.loggedIn)")
         return Group {
             if globalData.loggedIn {
                 ContentView()

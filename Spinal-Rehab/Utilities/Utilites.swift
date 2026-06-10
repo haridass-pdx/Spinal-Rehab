@@ -93,6 +93,12 @@ func dictDateStringToDate(key: String,
    return retDate
 }
 
+func dictKeyToStr(key: String,
+                  dict: DictListType)->String
+{
+    return dict[key]?.strVal ?? ""
+}
+
 func dictKeyToInt(key: String,
                           dict: DictListType)->Int
 {

@@ -101,16 +101,16 @@ struct LogInIView: View {
                     
                     Task {
                         do {
-                            print("[Login] connecting to \(logInLocal.host)…")
+                          //  print("[Login] connecting to \(logInLocal.host)…")
                             try await DatabaseManager.shared.connect(logInRec: logInLocal)
-                            print("[Login] connected, loading metadata…")
+                          //  print("[Login] connected, loading metadata…")
                             // Pre-load column metadata for all tables
                             await ColumnMetadataCache.shared.loadAll()
-                            print("[Login] metadata loaded, flipping loggedIn")
+                         //   print("[Login] metadata loaded, flipping loggedIn")
 
                             logIn = logInLocal
                             globalData.loggedIn = true
-                            print("[Login] loggedIn now = \(globalData.loggedIn)")
+                         //    print("[Login] loggedIn now = \(globalData.loggedIn)")
                             defaultRec.hostString = logInLocal.host
                             
                             if selectedServer == "other",
