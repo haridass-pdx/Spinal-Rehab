@@ -9,6 +9,8 @@ import SwiftUI
 
 struct PatientEditView: View {
     @Binding var patient: PatientData
+    @State private var selectedDate: Int? // patient.ID?
+   
     @State private var originalPatient = PatientData()
     @Environment(\.dismiss) var dismiss
     @EnvironmentObject var globalData: globalDataRec
@@ -24,10 +26,12 @@ struct PatientEditView: View {
             Text("Patient Information")
                 .font(.title)
                 .padding(.horizontal)
+            Text("Patient ID: \(patient.id)")
             Form{
                 HStack{
                     TextField("First Name", text: $patient.firstname)
                     TextField("Last Name", text: $patient.lastname)
+                        .padding(.leading, 10)
                 }
                 TextField("Street", text: $patient.street)
                 HStack{

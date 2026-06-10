@@ -11,6 +11,7 @@ internal import Combine
 class globalDataRec: ObservableObject{
     @Published var loggedIn: Bool = false
     @Published   var loggedInRec = logInRec()
+    @Published var disablePtList: Bool = false
 
 }
 

@@ -11,8 +11,11 @@ struct TestDateListView: View {
     @Binding var patient: PatientData
     @State var tdList: [TestDateData] = []
     @State private var selectedTDR: Int? // patient.ID?
-   
-    
+    @State private var selTDRec = TestDateData()
+    @State private var showTD: Bool = false
+    @Environment(\.dismiss) var dismiss
+    @EnvironmentObject var globalData: globalDataRec
+  
     var body: some View {
         Text("Test Date List!")
             .task {
@@ -24,6 +27,9 @@ struct TestDateListView: View {
                     await loadTestDates()
 
                 }
+            }
+            .onAppear {
+                globalData.disablePtList = false
             }
         Table(tdList,selection: $selectedTDR){
             TableColumn("Date"){ (tdRec: TestDateData) in
@@ -39,6 +45,19 @@ struct TestDateListView: View {
             }
         }
         .frame(width: 300, height: 300)
+        .onChange(of: selectedTDR){
+            if let theID = $0{
+                print("Selected \(theID)")
+                if let theTD = tdList.first(where: {$0.id == theID}){
+                    selTDRec = theTD
+                    showTD = true
+                }
+            }
+        }
+       
+        .navigationDestination(isPresented: $showTD) {  
+            TestDateView(theRec: $selTDRec)
+        }
 
     }
             
