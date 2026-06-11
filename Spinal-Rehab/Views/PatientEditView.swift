@@ -17,8 +17,7 @@ struct PatientEditView: View {
    
     init(patient: Binding<PatientData>){
         _patient = patient
-        originalPatient = patient.wrappedValue
-        
+        _originalPatient = State(initialValue: patient.wrappedValue)
     }
   
     var body: some View {
@@ -46,6 +45,7 @@ struct PatientEditView: View {
                 TextField("Gender", text: $patient.gender)
                 HStack{
                     DateTextField("Birthday", selection: $patient.dob)
+                        .frame(width: 200)
                     TextField("Age", value: $patient.age, format: .number)
                 }
                 HStack{
@@ -67,7 +67,7 @@ struct PatientEditView: View {
                 }.frame(alignment: .center)
             }
             
-            .frame(width: 400)
+            .frame(width: 450)
             .environment(\.layoutDirection, .leftToRight)  // already default
             // or, on macOS 13+:
             .formStyle(.grouped)

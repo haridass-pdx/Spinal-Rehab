@@ -15,8 +15,7 @@ struct DateTextField: View {
 
     let dateFormatter: DateFormatter = {
         let formatter = DateFormatter()
-        formatter.dateStyle = .short // e.g., "12/18/2025"
-        formatter.timeStyle = .none
+        formatter.dateFormat = "MM/dd/yyyy"// e.g., "12/18/2025"
         return formatter
     }()
 
@@ -28,8 +27,11 @@ struct DateTextField: View {
     var body: some View {
         HStack(alignment: .center) {
             Text("\(label): ").bold().padding(.leading)
-            TextField("MM/dd/yyyy", value: $selection, formatter: dateFormatter)
-                .textFieldStyle(.roundedBorder)
+            TextField("MM/dd/yyyy", text: Binding(
+                get: { selection.map { dateFormatter.string(from: $0) } ?? "" },
+                set: { selection = dateFormatter.date(from: $0) }
+            ))
+            .textFieldStyle(.roundedBorder)
         }
     }
 }

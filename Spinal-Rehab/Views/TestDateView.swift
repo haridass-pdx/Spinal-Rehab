@@ -9,28 +9,60 @@ import SwiftUI
 
 struct TestDateView: View {
     @Binding var theRec: TestDateData
+    @State private var originalRec = TestDateData()
+    var onSaved: () async -> Void = {}
     @Environment(\.dismiss) var dismiss
-    @EnvironmentObject var globalData: globalDataRec
-  var body: some View {
+
+    init(theRec: Binding<TestDateData>, onSaved: @escaping () async -> Void = {}) {
+        _theRec = theRec
+        _originalRec = State(initialValue: theRec.wrappedValue)
+        self.onSaved = onSaved
+    }
+
+    var body: some View {
         VStack{
             Form{
                 DateTextField("Test Date", selection: $theRec.testdate)
-                HStack{
+                    .frame(width: 300, height: 50, alignment: .trailing)
+                    .offset(x: 150, y: 0)
+                HStack(spacing: 10){
                     Toggle("Cervical", isOn: $theRec.cervical)
                     Toggle("Lumbar", isOn: $theRec.lumbar)
-                    Toggle("Aerobic", isOn: $theRec.aerobic)
-                    
+                    Toggle("Cardio", isOn: $theRec.cardio)
                 }
+                .padding(.vertical, 10)
                 Toggle("Is Baseline", isOn: $theRec.is_baseline)
-           
-                
-                
-            }.frame(width: 500, height: 500)
-                .onAppear {
-                    globalData.disablePtList = true
+
+                HStack{
+                    Spacer()
+                    Button("Save") {
+                        Task {
+                            await saveAndDismiss()
+                        }
+                    }
+                    Button("Cancel") {
+                        theRec = originalRec
+                        dismiss()
+                    }
+                    .disabled(theRec == originalRec)
+                    Spacer()
                 }
+            }
+            .frame(width: 500, height: 500)
+            .environment(\.layoutDirection, .leftToRight)  // already default
+            // or, on macOS 13+:
+           // .formStyle(.grouped)
         }
         .navigationTitle(Text("Test Date"))
+    }
+
+    func saveAndDismiss() async {
+        var localRec = theRec
+        await localRec.saveRec()
+        theRec = localRec
+        originalRec = localRec
+        await onSaved()
+        dismiss()
     }
 }
 

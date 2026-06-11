@@ -9,10 +9,10 @@ import SwiftUI
 
 struct ContentView: View {
     @EnvironmentObject var globalData: globalDataRec
-   @State var disableTable: Bool = false
     @State var patientList: [PatientData] = []
     @State var patientRecord = PatientData()
     @State private var selectedPt: Int? // patient.ID?
+    @State private var disableTable: Bool = false
     @State private var columnVisibility = NavigationSplitViewVisibility.all // or .doubleColumn
     var body: some View {
        
@@ -22,17 +22,15 @@ struct ContentView: View {
                     TableColumn("Name", value: \.fullname)
                 }
                 .disabled(disableTable)
-                .allowsHitTesting(!disableTable)
                 .onChange(of: selectedPt) {oldValue, newValue in
                     if let specificIndex = patientList.firstIndex(where: { $0.id == newValue }) {
                         patientRecord = patientList[specificIndex]
-                        print("Patient \(patientRecord.fullname) is at index \(specificIndex)") // Prints "Tablet is at index 2"
-     
                     }
                 }
                 .onChange(of: globalData.disablePtList) {oldValue, newValue in
                     disableTable = globalData.disablePtList
-                    print("disableTable is \(disableTable)")
+                    print("disableTable: \(disableTable)")
+                    print("globalData.disablePtList: \(globalData.disablePtList)")
                 }
               }
             

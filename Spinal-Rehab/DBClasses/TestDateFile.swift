@@ -7,12 +7,12 @@
 
 import Foundation
 
-struct TestDateData: Identifiable, Equatable, Hashable{
+struct TestDateData: Identifiable, Codable, Equatable, Hashable{
     var id: Int = 0
     var testdate: Date?
     var cervical: Bool = false
     var lumbar: Bool = false
-    var aerobic: Bool = false
+    var cardio: Bool = false
     var is_baseline: Bool = true
     var fri: Double = 0.0
     var fri_pain: Double = 0.0
@@ -21,7 +21,12 @@ struct TestDateData: Identifiable, Equatable, Hashable{
     var heart_rate: Int = 0
     var pt_id: Int = 0
     var dataDict: DictListType = [:]
-    
+
+    enum CodingKeys: String, CodingKey {
+        case id, testdate, cervical, lumbar, cardio, is_baseline,
+             fri, fri_pain, bp_systolic, bp_diastolic, heart_rate, pt_id
+    }
+
     init(){
         // Load from cache if available
         if let info = ColumnMetadataCache.shared.getInfo(for: "testdate") {
@@ -44,7 +49,7 @@ struct TestDateData: Identifiable, Equatable, Hashable{
         lhs.testdate == rhs.testdate &&
         lhs.cervical == rhs.cervical &&
         lhs.lumbar == rhs.lumbar &&
-        lhs.aerobic == rhs.aerobic &&
+        lhs.cardio == rhs.cardio &&
         lhs.is_baseline == rhs.is_baseline &&
         lhs.fri == rhs.fri &&
         lhs.fri_pain == rhs.fri_pain &&
@@ -74,55 +79,19 @@ struct TestDateData: Identifiable, Equatable, Hashable{
         readDictValues()
     }
     
-    mutating func readDictValues(){
-        let theID = dataDict["id"]?.strVal ?? "0"
-        
-        self.id = Int(theID) ?? 0
-        
-        self.cervical = dictKeyToBool(key: "cervical",
-                                      dict: dataDict)
-        self.lumbar = dictKeyToBool(key: "lumbar",
-                                      dict: dataDict)
-        self.aerobic = dictKeyToBool(key: "aerobic",
-                                      dict: dataDict)
-        self.is_baseline = dictKeyToBool(key: "is_baseline",
-                                      dict: dataDict)
-        
-        
-        
-        self.testdate = dictDateStringToDate(key: "testdate",
-                                        dict: dataDict)
-        self.fri =  dictKeyToDouble(key: "fri",
-                                        dict: dataDict)
-        
-        self.fri_pain =  dictKeyToDouble(key: "fri_pain",
-                                        dict: dataDict)
-     
-        self.bp_systolic = dictKeyToInt(key: "bp_systolic", dict: dataDict)
-        self.bp_diastolic = dictKeyToInt(key: "bp_diastolic", dict: dataDict)
-        self.heart_rate = dictKeyToInt(key: "heart_rate", dict: dataDict)
-        self.pt_id = dictKeyToInt(key: "pt_id", dict: dataDict)
-      }
+    mutating func readDictValues() {
+        let strs = dataDict.mapValues { $0.strVal }
+        guard let decoded = try? DictDecoder().decode(Self.self, from: strs) else { return }
+        let savedDict = self.dataDict
+        self = decoded
+        self.dataDict = savedDict
+    }
 
-    
-    mutating func recToDict(){
-        var localDict:DictListType = self.dataDict
-        localDict["id"]?.strVal = String(id)
-        localDict["pt_id"]?.strVal = String(pt_id)
-        localDict["cervial"]?.strVal = boolToString(bool: cervical)
-        localDict["lumbar"]?.strVal = boolToString(bool: lumbar)
-        localDict["aerobic"]?.strVal = boolToString(bool: aerobic)
-        localDict["is_baseline"]?.strVal = boolToString(bool: is_baseline)
-        localDict["fri"]?.strVal = fri.description
-        localDict["fri_pain"]?.strVal = fri_pain.description
-        localDict["bp_systolic"]?.strVal = String(bp_systolic)
-        localDict["bp_diastolic"]?.strVal = String(bp_diastolic)
-        localDict["heart_rate"]?.strVal = String(heart_rate)
-         localDict["testdate"]?.strVal = getDateOptString( from: testdate,
-                                                     formatStr: "yyyy-MM-dd")
-   
-        self.dataDict = localDict
-        
+    mutating func recToDict() {
+        guard let strs = try? DictEncoder().encode(self) else { return }
+        for (k, v) in strs {
+            dataDict[k]?.strVal = v
+        }
     }
 
 }

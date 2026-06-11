@@ -8,7 +8,7 @@
 import Foundation
 
 /// Documentation template for your custom Swift document
-struct normalData: Identifiable, Equatable, Hashable {
+struct normalData: Identifiable, Codable, Equatable, Hashable {
     // Add your boilerplate properties and functions here
     var id: Int = 0
     var mean: Int = 0
@@ -23,9 +23,15 @@ struct normalData: Identifiable, Equatable, Hashable {
     var highage: Int = 0
     var normid: Int = 0
     var testtable_id: Int = 0
-    
+
     var dataDict: DictListType = [:]
-    
+
+    // Only stored scalars participate in Codable; dataDict is the cached column-info sidecar.
+    enum CodingKeys: String, CodingKey {
+        case id, mean, excellent, good, fair, poor, veryPoor,
+             gender, agerange, lowage, highage, normid, testtable_id
+    }
+
     init(){
         // Load from cache if available
         if let info = ColumnMetadataCache.shared.getInfo(for: "normal_data") {
@@ -76,56 +82,19 @@ struct normalData: Identifiable, Equatable, Hashable {
         readDictValues()
     }
     
-    /* var id: Int = 0
-     var mean: Int = 0
-     var excellent: Int = 0
-     var good: Int = 0
-     var fair: Int = 0
-     var poor: Int = 0
-     var veryPoor: Int = 0
-     var gender: String = ""
-     var agerange: String = ""
-     var lowage: Int = 0
-     var highage: Int = 0
-     var normid: Int = 0
-     var testtable_id: Int = 0
-     */
-    mutating func readDictValues(){
-        id = dictKeyToInt(key: "id", dict: dataDict)
-        mean = dictKeyToInt(key: "mean", dict: dataDict)
-        excellent = dictKeyToInt(key: "excellent", dict: dataDict)
-        good = dictKeyToInt(key: "good", dict: dataDict)
-        fair = dictKeyToInt(key: "fair", dict: dataDict)
-        poor = dictKeyToInt(key: "poor", dict: dataDict)
-        veryPoor = dictKeyToInt(key: "veryPoor", dict: dataDict)
-        gender = dictKeyToStr(key: "gender", dict: dataDict)
-        agerange = dictKeyToStr(key: "agerange", dict: dataDict)
-        lowage = dictKeyToInt(key: "lowage", dict: dataDict)
-        highage = dictKeyToInt(key: "highage", dict: dataDict)
-        normid = dictKeyToInt(key: "normid", dict: dataDict)
-        
-        testtable_id = dictKeyToInt(key: "testtable_id", dict: dataDict)
-        
-
+    mutating func readDictValues() {
+        let strs = dataDict.mapValues { $0.strVal }
+        guard let decoded = try? DictDecoder().decode(Self.self, from: strs) else { return }
+        let savedDict = self.dataDict
+        self = decoded
+        self.dataDict = savedDict
     }
-    
-    mutating func recToDict(){
-        var localDict:DictListType = self.dataDict
-        localDict["id"]?.strVal = String(id)
-        localDict["mean"]?.strVal = String(mean)
-        localDict["excellent"]?.strVal = String(excellent)
-        localDict["good"]?.strVal = String(good)
-        localDict["fair"]?.strVal = String(fair)
-        localDict["poor"]?.strVal = String(poor)
-        localDict["veryPoor"]?.strVal = String(veryPoor)
-        localDict["gender"]?.strVal = gender
-        localDict["agerange"]?.strVal = agerange
-        localDict["lowage"]?.strVal = String(lowage)
-        localDict["highage"]?.strVal = String(highage)
-        localDict["normid"]?.strVal = String(normid)
-        localDict["testtable_id"]?.strVal = String(testtable_id)
-      
-        self.dataDict = localDict
+
+    mutating func recToDict() {
+        guard let strs = try? DictEncoder().encode(self) else { return }
+        for (k, v) in strs {
+            dataDict[k]?.strVal = v
+        }
     }
 
 

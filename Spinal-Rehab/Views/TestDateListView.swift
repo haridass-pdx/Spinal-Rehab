@@ -28,13 +28,11 @@ struct TestDateListView: View {
 
                 }
             }
-            .onAppear {
-                globalData.disablePtList = false
-            }
+           
         Table(tdList,selection: $selectedTDR){
             TableColumn("Date"){ (tdRec: TestDateData) in
                 if let theDate = tdRec.testdate {
-                    Text(theDate, format: .dateTime.month().day().year())
+                    Text(theDate, format: .dateTime.month(.twoDigits).day(.twoDigits).year(.defaultDigits))
                 }
                 else{
                     Text("No Date Available")
@@ -44,7 +42,7 @@ struct TestDateListView: View {
                 
             }
         }
-        .frame(width: 300, height: 300)
+        .frame(width: 300, height: 150)
         .onChange(of: selectedTDR){
             if let theID = $0{
                 print("Selected \(theID)")
@@ -55,8 +53,13 @@ struct TestDateListView: View {
             }
         }
        
-        .navigationDestination(isPresented: $showTD) {  
-            TestDateView(theRec: $selTDRec)
+        .navigationDestination(isPresented: $showTD) {
+            TestDateView(theRec: $selTDRec, onSaved: {
+                await loadTestDates()
+            })
+        }
+        .onChange(of: showTD) { _, newValue in
+            globalData.disablePtList = newValue
         }
 
     }
