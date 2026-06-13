@@ -27,11 +27,6 @@ struct ContentView: View {
                         patientRecord = patientList[specificIndex]
                     }
                 }
-                .onChange(of: globalData.disablePtList) {oldValue, newValue in
-                    disableTable = globalData.disablePtList
-                    print("disableTable: \(disableTable)")
-                    print("globalData.disablePtList: \(globalData.disablePtList)")
-                }
               }
             
             .padding()
@@ -44,7 +39,7 @@ struct ContentView: View {
         detail: {
             if(patientRecord.id != 0) {
                 NavigationStack {
-                    PatientEditView(patient: $patientRecord)
+                    PatientEditView(patient: $patientRecord, tablesDisabled: $disableTable)
                 }
             }
             else {

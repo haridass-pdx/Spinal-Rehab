@@ -9,26 +9,32 @@ import SwiftUI
 
 struct TestDateListView: View {
     @Binding var patient: PatientData
+    @Binding var tablesDisabled: Bool
     @State var tdList: [TestDateData] = []
     @State private var selectedTDR: Int? // patient.ID?
     @State private var selTDRec = TestDateData()
     @State private var showTD: Bool = false
     @Environment(\.dismiss) var dismiss
-    @EnvironmentObject var globalData: globalDataRec
-  
+
     var body: some View {
         Text("Test Date List!")
-            .task {
+            .onAppear(perform:{
+                Task{
+                    await loadTestDates()
+                }
+            })
+        /*    .task {
                 await loadTestDates()
-            }
+            }*/
+                      
         Text("Records in list \(tdList.count)")
             .onChange(of: patient){
                 Task{
                     await loadTestDates()
-
+                    
                 }
             }
-           
+        
         Table(tdList,selection: $selectedTDR){
             TableColumn("Date"){ (tdRec: TestDateData) in
                 if let theDate = tdRec.testdate {
@@ -38,7 +44,7 @@ struct TestDateListView: View {
                     Text("No Date Available")
                 }
                 
-        
+                
                 
             }
         }
@@ -52,26 +58,37 @@ struct TestDateListView: View {
                 }
             }
         }
-       
+        
         .navigationDestination(isPresented: $showTD) {
-            TestDateView(theRec: $selTDRec, onSaved: {
-                await loadTestDates()
-            })
+            TestDateView(theRec: $selTDRec, tablesDisabled: $tablesDisabled)
         }
         .onChange(of: showTD) { _, newValue in
-            globalData.disablePtList = newValue
+            tablesDisabled = newValue
+            if !newValue {
+                syncEditedRecord()
+            }
         }
-
+        
     }
-            
+    
     func loadTestDates() async{
         let tdC = testDateClass()
         await tdList = tdC.buildPatientist(ptid: patient.id)
+        print("load test dates")
     }
-        
+
+    func syncEditedRecord() {
+        guard selTDRec.id != 0 else { return }
+        if let idx = tdList.firstIndex(where: { $0.id == selTDRec.id }) {
+            tdList[idx] = selTDRec
+        } else {
+            tdList.append(selTDRec)
+        }
     }
+    
+}
 
 
 #Preview {
- //   TestDateListView()
+    //   TestDateListView()
 }

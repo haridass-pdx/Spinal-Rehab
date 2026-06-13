@@ -9,14 +9,15 @@ import SwiftUI
 
 struct PatientEditView: View {
     @Binding var patient: PatientData
+    @Binding var tablesDisabled: Bool
     @State private var selectedDate: Int? // patient.ID?
-   
+
     @State private var originalPatient = PatientData()
     @Environment(\.dismiss) var dismiss
-    @EnvironmentObject var globalData: globalDataRec
-   
-    init(patient: Binding<PatientData>){
+
+    init(patient: Binding<PatientData>, tablesDisabled: Binding<Bool>){
         _patient = patient
+        _tablesDisabled = tablesDisabled
         _originalPatient = State(initialValue: patient.wrappedValue)
     }
   
@@ -74,7 +75,7 @@ struct PatientEditView: View {
            
         }
         .padding(10)
-        TestDateListView(patient: $patient)
+        TestDateListView(patient: $patient, tablesDisabled: $tablesDisabled)
         Spacer()
     }
     

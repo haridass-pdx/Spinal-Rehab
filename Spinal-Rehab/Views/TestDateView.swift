@@ -9,29 +9,37 @@ import SwiftUI
 
 struct TestDateView: View {
     @Binding var theRec: TestDateData
+    @Binding var tablesDisabled: Bool
     @State private var originalRec = TestDateData()
-    var onSaved: () async -> Void = {}
     @Environment(\.dismiss) var dismiss
+    let fWidth = 150.0
 
-    init(theRec: Binding<TestDateData>, onSaved: @escaping () async -> Void = {}) {
+    init(theRec: Binding<TestDateData>, tablesDisabled: Binding<Bool>) {
         _theRec = theRec
+        _tablesDisabled = tablesDisabled
         _originalRec = State(initialValue: theRec.wrappedValue)
-        self.onSaved = onSaved
     }
 
     var body: some View {
-        VStack{
-            Form{
+        Form{
+            VStack{
                 DateTextField("Test Date", selection: $theRec.testdate)
                     .frame(width: 300, height: 50, alignment: .trailing)
-                    .offset(x: 150, y: 0)
-                HStack(spacing: 10){
-                    Toggle("Cervical", isOn: $theRec.cervical)
-                    Toggle("Lumbar", isOn: $theRec.lumbar)
-                    Toggle("Cardio", isOn: $theRec.cardio)
-                }
-                .padding(.vertical, 10)
-                Toggle("Is Baseline", isOn: $theRec.is_baseline)
+                    .padding(.leading, 200) 
+                    
+                HStack{
+                    VStack{
+                        Toggle("Cervical", isOn: $theRec.cervical)
+                        Toggle("Lumbar", isOn: $theRec.lumbar)
+                    }
+                    .frame(width: fWidth)
+                    Divider()
+                    VStack{
+                        Toggle("Cardio", isOn: $theRec.cardio)
+                        Toggle("Is Baseline", isOn: $theRec.is_baseline)
+                    }
+                    .frame(width: fWidth)
+                }.frame(width: 300, height: 125, alignment: .center )
 
                 HStack{
                     Spacer()
@@ -49,11 +57,13 @@ struct TestDateView: View {
                 }
             }
             .frame(width: 500, height: 500)
-            .environment(\.layoutDirection, .leftToRight)  // already default
-            // or, on macOS 13+:
-           // .formStyle(.grouped)
+            .padding(.trailing, 200 )
+            
         }
         .navigationTitle(Text("Test Date"))
+        .onDisappear {
+            tablesDisabled = false
+        }
     }
 
     func saveAndDismiss() async {
@@ -61,7 +71,6 @@ struct TestDateView: View {
         await localRec.saveRec()
         theRec = localRec
         originalRec = localRec
-        await onSaved()
         dismiss()
     }
 }
