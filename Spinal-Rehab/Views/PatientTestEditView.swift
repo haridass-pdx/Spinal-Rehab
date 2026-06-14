@@ -10,7 +10,14 @@ import SwiftUI
 struct PatientTestEditView: View {
     @Binding var theRec: PatienttestData
     @Environment(\.dismiss) var dismiss
-   
+    @State var originalRec = PatienttestData()
+    
+    init(theRec: Binding<PatienttestData>) {
+        _theRec = theRec
+        //  _tablesDisabled = tablesDisabled
+        _originalRec = State(initialValue: theRec.wrappedValue)
+    }
+
     var body: some View {
         VStack(alignment: .leading, spacing: 10.0){
             Form(){
@@ -18,16 +25,20 @@ struct PatientTestEditView: View {
                 TextField("Test Name", text: $theRec.testname)
                 TextField("Test Value", value: $theRec.testvalue, format: .number)
       
-                TextField("Test Score", text: $theRec.testscores)
+                TextField("Test Score", text: $theRec.testscore)
                     .padding(.bottom, 40.0)
                 
                 HStack{
                     Button("Save"){
                     print("Save")
-                    dismiss()
+                      saveRecord()
+                   dismiss()
                 }
+                   .disabled(theRec == originalRec)
+                    
                     Button("Cancel"){
                         print("Cancel")
+                        theRec = originalRec
                         dismiss()
                     }
                 }
@@ -40,6 +51,16 @@ struct PatientTestEditView: View {
             
         }.navigationTitle("Back to Test Date")
     }
+    
+    func saveRecord()  {
+        Task{
+            var localRec = theRec
+            await   localRec.saveRec()
+            theRec = localRec
+        }
+
+    }
+    
 }
 
 #Preview {

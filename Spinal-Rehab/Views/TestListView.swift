@@ -22,7 +22,7 @@ struct TestListView: View {
                 Text("\(pttRec.testvalue)")
             }
             TableColumn("Test Score"){ (pttRec: PatienttestData) in
-                Text("\(pttRec.testscores)")
+                Text("\(pttRec.testscore)")
             }
             
             
@@ -34,10 +34,13 @@ struct TestListView: View {
                     ptTestRec = theTestRec
                     showEdit = true
                 }
+                if let idx = theList.firstIndex(where: { $0.id == ptTestRec.id }) {
+                    theList[idx] = ptTestRec
+                }
             }
         }
         .navigationDestination(isPresented: $showEdit) {
-            PatientTestEditView(theRec: $ptTestRec)
+             PatientTestEditView(theRec: $ptTestRec)
         }
 
     }

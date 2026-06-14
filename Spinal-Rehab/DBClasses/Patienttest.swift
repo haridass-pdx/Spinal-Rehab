@@ -13,7 +13,7 @@ struct PatienttestData: Identifiable, Equatable, Hashable {
     var id: Int = 0
     var testname: String = ""
     var testvalue: Double = 0.0
-    var testscores: String = ""
+    var testscore: String = ""
     var testdate_id: Int = 0
     var pt_id: Int = 0
           
@@ -41,7 +41,7 @@ struct PatienttestData: Identifiable, Equatable, Hashable {
         lhs.id == rhs.id  &&
         lhs.testname == rhs.testname &&
         lhs.testvalue == rhs.testvalue &&
-        lhs.testscores == rhs.testscores &&
+        lhs.testscore == rhs.testscore &&
         lhs.testdate_id == rhs.testdate_id &&
         lhs.pt_id == rhs.pt_id
     }
@@ -75,7 +75,7 @@ struct PatienttestData: Identifiable, Equatable, Hashable {
         testname = dictKeyToStr(key: "testname", dict: dataDict)
         testvalue = dictKeyToDouble(key: "id", dict: dataDict)
 
-        testscores = dictKeyToStr(key: "testscores", dict: dataDict)
+        testscore = dictKeyToStr(key: "testscore", dict: dataDict)
         testdate_id = dictKeyToInt(key: "testdate_id", dict: dataDict)
         pt_id = dictKeyToInt(key: "pt_id", dict: dataDict)
   
@@ -86,7 +86,7 @@ struct PatienttestData: Identifiable, Equatable, Hashable {
         localDict["id"]?.strVal = String(id)
         localDict["testname"]?.strVal = testname
         localDict["testvalue"]?.strVal = String(testvalue)
-        localDict["testscores"]?.strVal = testscores
+        localDict["testscore"]?.strVal = testscore
         localDict["testdate_id"]?.strVal = String(testdate_id)
         localDict["pt_id"]?.strVal = String(pt_id)
         self.dataDict = localDict
