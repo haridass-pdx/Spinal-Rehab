@@ -12,7 +12,7 @@ struct TestDateListView: View {
     @Binding var tablesDisabled: Bool
     @State var tdList: [TestDateData] = []
     @State private var selectedTDR: Int? // patient.ID?
-    @State private var selTDRec = TestDateData()
+    @State  var selTDRec = TestDateData()
     @State private var showTD: Bool = false
     @Environment(\.dismiss) var dismiss
 
@@ -54,19 +54,21 @@ struct TestDateListView: View {
                 print("Selected \(theID)")
                 if let theTD = tdList.first(where: {$0.id == theID}){
                     selTDRec = theTD
+                    tablesDisabled = true
                     showTD = true
                 }
             }
         }
-        
-        .navigationDestination(isPresented: $showTD) {
-            TestDateView(theRec: $selTDRec, tablesDisabled: $tablesDisabled)
-        }
-        .onChange(of: showTD) { _, newValue in
-            tablesDisabled = newValue
-            if !newValue {
-                syncEditedRecord()
+        .sheet(isPresented: $showTD, onDismiss: {
+            if let idx = tdList.firstIndex(where: { $0.id == selTDRec.id }) {
+                tdList[idx] = selTDRec
             }
+            selectedTDR = nil
+            tablesDisabled = false
+        }) {
+            TestDateView(theRec: $selTDRec)
+                .frame(minWidth: 400, minHeight: 300)
+                .padding()
         }
         
     }
@@ -79,6 +81,8 @@ struct TestDateListView: View {
 
     func syncEditedRecord() {
         guard selTDRec.id != 0 else { return }
+        
+        print(selTDRec.cervical)
         if let idx = tdList.firstIndex(where: { $0.id == selTDRec.id }) {
             tdList[idx] = selTDRec
         } else {

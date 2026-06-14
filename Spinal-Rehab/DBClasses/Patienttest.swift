@@ -30,7 +30,7 @@ struct PatienttestData: Identifiable, Equatable, Hashable {
     mutating func initDictionary(colNames: [String], colTypes: [colTypes]){
         var row: [String: DictValue] = [:]
         for (key, itemType) in Swift.zip(colNames, colTypes) {
-            let dictItem: DictValue = (strVal: "", type: itemType)
+            let dictItem = DictValue(strVal: "", type: itemType)
             row[key] = dictItem
         }
         dataDict = row
@@ -107,7 +107,7 @@ class Patient_testClass: pgClientClass {
         var text: String = ""
         var result: [PatienttestData] = []
         
-        text = "SELECT * FROM public.patient_test Where testdateid = \(pttestid) ORDER BY id ASC ;"
+        text = "SELECT * FROM public.patient_test Where testdate_id = \(pttestid) ORDER BY id ASC ;"
         
         await executeQuery(text: text)
         var thePtTest  = PatienttestData() // = EmployeeData()

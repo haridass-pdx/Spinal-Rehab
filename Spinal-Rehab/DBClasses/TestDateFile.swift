@@ -37,7 +37,7 @@ struct TestDateData: Identifiable, Codable, Equatable, Hashable{
     mutating func initDictionary(colNames: [String], colTypes: [colTypes]){
         var row: [String: DictValue] = [:]
         for (key, itemType) in Swift.zip(colNames, colTypes) {
-            let dictItem: DictValue = (strVal: "", type: itemType)
+            let dictItem = DictValue(strVal: "", type: itemType)
             row[key] = dictItem
         }
         dataDict = row

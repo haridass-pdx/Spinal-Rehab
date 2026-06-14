@@ -12,7 +12,12 @@ import NIOPosix
 import SwiftUI
 public import Combine
 
-typealias DictValue = (strVal: String, type: UInt32)
+// typealias DictValue = (strVal: String, type: UInt32)
+struct DictValue: Sendable {
+    var strVal: String
+    var type: UInt32
+}
+
 typealias DictListType = [String: DictValue] // (strVal: String, type: UInt32)
 typealias colTypes = UInt32
 
@@ -318,7 +323,7 @@ public class pgClientClass: ObservableObject {
     func initDictionary() {
         var row: [String: DictValue] = [:]
         for (key, itemType) in zip(colNames, colTypes) {
-            row[key] = (strVal: "", type: itemType)
+            row[key] = DictValue(strVal: "", type: itemType)
         }
         if !row.isEmpty {
             dictList.append(row)
@@ -334,7 +339,7 @@ public class pgClientClass: ObservableObject {
                 let name = colNames[idx]
                 let cell = row[idx]
                 let str = cellToString(cell)
-                result[name] = (strVal: str, type: colTypes[idx])
+                result[name] = DictValue(strVal: str, type: colTypes[idx])
             }
         } else {
             if !alertSent {
