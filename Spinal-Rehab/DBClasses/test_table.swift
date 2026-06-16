@@ -96,7 +96,7 @@ class test_tableClass: pgClientClass {
     }
     
     
-    func buildPatientist() async -> [test_tableData]{
+    func buildTesttist() async -> [test_tableData]{
         var text: String = ""
         var result: [test_tableData] = []
         

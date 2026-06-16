@@ -43,7 +43,7 @@ struct RootView: View {
         //      let _ = print("[RootView] body re-evaluating, loggedIn = \(globalData.loggedIn)")
         return Group {
             if globalData.loggedIn {
-                ContentView()
+                AppTabView()
             } else {
                 LogInIView()
             }
