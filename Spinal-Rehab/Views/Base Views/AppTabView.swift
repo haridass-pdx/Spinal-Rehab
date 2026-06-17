@@ -10,7 +10,9 @@ import SwiftUI
 struct AppTabView: View {
     var body: some View {
         TabView {
-            ContentView()
+            NavigationStack {
+                ContentView()
+            }
                 .tabItem {
                     Label("Patients", systemImage: "house")
                 }

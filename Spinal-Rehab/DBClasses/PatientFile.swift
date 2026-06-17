@@ -127,6 +127,18 @@ class patientClass: pgClientClass {
                    tName: "patients",
                    pkField: "id")
     }
+    
+    class func fullName(forId: Int) async->String{
+        var result = ""
+        let ptc = patientClass()
+        let qry = "SELECT firstname, lastname FROM patients WHERE id = \(forId);"
+        let resStr = await ptc.getResults(qry: qry)
+        
+        if(resStr.count == 2){
+            result = "\(resStr[0]) \(resStr[1])"
+        }
+        return result
+    }
 
     func buildPatientist() async -> [PatientData]{
         var text: String = ""

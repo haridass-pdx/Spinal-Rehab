@@ -151,33 +151,36 @@ func cellToString(_ cell: PostgresCell) -> String {
         return (try? cell.decode(Bool.self)) == true ? "t" : "f"
     }
     
-    // Integer types
+    // Integer types — on typed-decode failure, fall through to text fallback below
     if dt == .int2 {
-        return (try? cell.decode(Int16.self)).map(String.init) ?? "0"
+        if let v = try? cell.decode(Int16.self) { return String(v) }
     }
     if dt == .int4 {
-        return (try? cell.decode(Int32.self)).map(String.init) ?? "0"
+        if let v = try? cell.decode(Int32.self) { return String(v) }
     }
     if dt == .int8 {
-        return (try? cell.decode(Int64.self)).map(String.init) ?? "0"
+        if let v = try? cell.decode(Int64.self) { return String(v) }
     }
-    
-    // Float types
+
+    // Float types — on typed-decode failure, fall through to text fallback below
     if dt == .float4 {
-        return (try? cell.decode(Float.self)).map { String($0) } ?? "0"
+        if let v = try? cell.decode(Float.self) { return String(v) }
     }
     if dt == .float8 {
-        return (try? cell.decode(Double.self)).map { String($0) } ?? "0"
+        if let v = try? cell.decode(Double.self) { return String(v) }
     }
     
-    // Numeric (decimal) - binary format is base-10000 digit groups
+    // Numeric (decimal) - binary format is base-10000 digit groups.
+    // Text format won't parse here, so fall through if header read fails.
     if dt == .numeric {
         var buf = cell.bytes!
         guard let ndigits = buf.readInteger(as: Int16.self),
               let weight = buf.readInteger(as: Int16.self),
               let sign = buf.readInteger(as: Int16.self),
               let dscale = buf.readInteger(as: Int16.self) else {
-            return "0"
+            if let s = try? cell.decode(String.self) { return s }
+            var b = cell.bytes!
+            return b.readString(length: b.readableBytes) ?? "0"
         }
         
         // NaN check
@@ -401,11 +404,12 @@ public class pgClientClass: ObservableObject {
             for try await row in rows {
                 let randomAccess = row.makeRandomAccess()
                 if randomAccess.count > 0 {
-                     let resStr = cellToString(randomAccess[0])
-                      if !resStr.isEmpty {
-                        resultStr.append(resStr)
+                    randomAccess.forEach{ raItem in
+                        let resStr = cellToString(raItem)
+                        if !resStr.isEmpty {
+                            resultStr.append(resStr)
+                        }
                     }
-                    
                     
                 }
             }

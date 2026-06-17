@@ -103,7 +103,7 @@ class Patient_testClass: pgClientClass {
     }
     
     
-    func buildPatientist(pttestid: Int) async -> [PatienttestData]{
+    func buildPtTestList(pttestid: Int) async -> [PatienttestData]{
         var text: String = ""
         var result: [PatienttestData] = []
         

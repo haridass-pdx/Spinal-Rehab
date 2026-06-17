@@ -16,7 +16,7 @@ struct ContentView: View {
     @State private var columnVisibility = NavigationSplitViewVisibility.all // or .doubleColumn
     var body: some View {
        
-        NavigationSplitView(columnVisibility: $columnVisibility) {
+      //  NavigationSplitView(columnVisibility: $columnVisibility) {
             VStack {
                 Table(patientList, selection: $selectedPt) {
                     TableColumn("Name", value: \.fullname)
@@ -28,6 +28,7 @@ struct ContentView: View {
                     }
                 }
               }
+            .frame(width: 400, height: 300)
             
             .padding()
             .task {
@@ -35,10 +36,12 @@ struct ContentView: View {
             }
           
      
-        }  // NavSplit
-        detail: {
+      
             DetailView(patientRecord: $patientRecord, disableTable: $disableTable)
-        }
+            .padding(.bottom, 30.0)
+     
+        
+        
       //  .onAppear { print("[ContentView] onAppear") }
     } // body
       

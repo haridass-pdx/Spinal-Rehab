@@ -13,6 +13,7 @@ struct TestDateView: View {
     @Environment(\.dismiss) var dismiss
     @State var ptTestList: [PatienttestData] = []
     let fWidth = 150.0
+    @State var fullName: String = ""
     
     init(theRec: Binding<TestDateData>) {
         _theRec = theRec
@@ -22,15 +23,18 @@ struct TestDateView: View {
     
     var body: some View {
         NavigationStack {
-            Text("Test Date")
+            Text("Test Date - \(fullName)")
                 .font(.title)
+            
                 .task {
                     await buildTestList()
+                    fullName = await patientClass.fullName(forId: theRec.pt_id)
+                    
                 }
             VStack(alignment:.center){
                 Form{
                     VStack{
-                        Text("Teest Date ID : \(theRec.id)")
+                        Text("Test Date ID : \(theRec.id)")
                         TextField("Enter date", value: $theRec.testdate, format: .dateTime.day().month().year())
                             .textFieldStyle(.roundedBorder)
                             .padding(.leading, 100)
@@ -74,11 +78,12 @@ struct TestDateView: View {
                                     await saveAndDismiss()
                                 }
                             }
+                            .disabled(theRec == originalRec)
                             Button("Cancel") {
                                 theRec = originalRec
                                 dismiss()
                             }
-                            .disabled(theRec == originalRec)
+                            
                             Spacer()
                         }
                     }
@@ -103,7 +108,7 @@ struct TestDateView: View {
     
     func buildTestList() async {
         let ptc = Patient_testClass()
-        ptTestList = await ptc.buildPatientist(pttestid: theRec.id)
+        ptTestList = await ptc.buildPtTestList(pttestid: theRec.id)
     }
 }
 

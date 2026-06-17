@@ -12,9 +12,9 @@ struct DetailView: View {
     @Binding var disableTable: Bool
     var body: some View {
         if(patientRecord.id != 0) {
-            NavigationStack {
+         //   NavigationStack {
                 PatientEditView(patient: $patientRecord, tablesDisabled: $disableTable)
-            }
+        //    }
         }
         else {
             Text("No Record Selected")
