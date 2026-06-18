@@ -13,12 +13,29 @@ struct ContentView: View {
     @State var patientRecord = PatientData()
     @State private var selectedPt: Int? // patient.ID?
     @State private var disableTable: Bool = false
+    @State private var searchText: String = ""
     @State private var columnVisibility = NavigationSplitViewVisibility.all // or .doubleColumn
+    @State private var editPatient: Bool = false
+    
+    var filteredNames: [PatientData] {
+        if searchText.isEmpty {
+            return patientList
+        } else {
+            return patientList.filter { $0.lastname.localizedCaseInsensitiveContains(searchText) }
+        }
+    }
     var body: some View {
        
       //  NavigationSplitView(columnVisibility: $columnVisibility) {
+        VStack {
+            
+            
             VStack {
-                Table(patientList, selection: $selectedPt) {
+                HStack{
+                    Text("Last Name")
+                    TextField("Search", text: $searchText)
+                }
+                Table(filteredNames, selection: $selectedPt) {
                     TableColumn("Name", value: \.fullname)
                 }
                 .disabled(disableTable)
@@ -27,20 +44,23 @@ struct ContentView: View {
                         patientRecord = patientList[specificIndex]
                     }
                 }
-              }
+             
+            }
             .frame(width: 400, height: 300)
             
             .padding()
             .task {
                 await loadPatientList()
             }
-          
-     
-      
+            
+            
+            
             DetailView(patientRecord: $patientRecord, disableTable: $disableTable)
-            .padding(.bottom, 30.0)
-     
-        
+                .padding(.bottom, 30.0)
+            
+        }
+      
+
         
       //  .onAppear { print("[ContentView] onAppear") }
     } // body

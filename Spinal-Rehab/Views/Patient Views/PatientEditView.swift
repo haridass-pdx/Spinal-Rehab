@@ -22,60 +22,63 @@ struct PatientEditView: View {
     }
   
     var body: some View {
-        VStack(alignment: .leading, spacing: 15) {
-            Text("Patient Information")
-                .font(.title)
-                .padding(.horizontal)
-            Text("Patient ID: \(patient.id)")
-            Form{
-                HStack{
-                    TextField("First Name", text: $patient.firstname)
-                    TextField("Last Name", text: $patient.lastname)
-                        .padding(.leading, 10)
-                }
-                TextField("Street", text: $patient.street)
-                HStack{
-                    TextField("City", text: $patient.city)
-                    TextField("State", text: $patient.state)
-                    TextField("Zip", text: $patient.zip)
-                }
-                HStack{
-                    TextField("Phone", text: $patient.phone)
-                    TextField("Email", text: $patient.email)
-                }
-                TextField("Gender", text: $patient.gender)
-                HStack{
-                    DateTextField("Birthday", selection: $patient.dob)
-                        .frame(width: 200)
-                    TextField("Age", value: $patient.age, format: .number)
-                }
-                HStack{
-                    Spacer()
-                    Button("Save") {
-                        SaveRecord()
-                        originalPatient = patient
-                        dismiss()
+        HStack(alignment: .top, spacing: 20.0){
+            VStack(alignment: .leading, spacing: 15) {
+                Text("Patient Information")
+                    .font(.title3)
+                    .padding(.horizontal)
+                Text("Patient ID: \(patient.id)")
+                Form{
+                    HStack{
+                        TextField("First Name", text: $patient.firstname)
+                        TextField("Last Name", text: $patient.lastname)
+                            .padding(.leading, 10)
                     }
-                    Button("Cancel") {
-                        // setField()
-                        //resetTimeForm()
-                        patient = originalPatient
-                        dismiss()
-                        //Temp()
+                    TextField("Street", text: $patient.street)
+                    HStack{
+                        TextField("City", text: $patient.city)
+                        TextField("State", text: $patient.state)
+                        TextField("Zip", text: $patient.zip)
                     }
-                    .disabled(patient == originalPatient)
-                    Spacer()
-                }.frame(alignment: .center)
+                    HStack{
+                        TextField("Phone", text: $patient.phone)
+                        TextField("Email", text: $patient.email)
+                    }
+                    TextField("Gender", text: $patient.gender)
+                    HStack{
+                        DateTextField("Birthday", selection: $patient.dob)
+                            .frame(width: 200)
+                        TextField("Age", value: $patient.age, format: .number)
+                    }
+                    HStack{
+                        Spacer()
+                        Button("Save") {
+                            SaveRecord()
+                            originalPatient = patient
+                            dismiss()
+                        }
+                        Button("Cancel") {
+                            // setField()
+                            //resetTimeForm()
+                            patient = originalPatient
+                            dismiss()
+                            //Temp()
+                        }
+                        .disabled(patient == originalPatient)
+                        Spacer()
+                    }.frame(alignment: .center)
+                }
+                
+                .frame(width: 500, height: 400)
+                .environment(\.layoutDirection, .leftToRight)  // already default
+                // or, on macOS 13+:
+                .formStyle(.grouped)
+                
             }
-            
-            .frame(width: 450)
-            .environment(\.layoutDirection, .leftToRight)  // already default
-            // or, on macOS 13+:
-            .formStyle(.grouped)
-           
+            .padding(10)
+            Divider()
+            TestDateListView(patient: $patient, tablesDisabled: $tablesDisabled)
         }
-        .padding(10)
-        TestDateListView(patient: $patient, tablesDisabled: $tablesDisabled)
         Spacer()
     }
     

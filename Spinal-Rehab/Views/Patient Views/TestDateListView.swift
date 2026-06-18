@@ -17,60 +17,61 @@ struct TestDateListView: View {
     @Environment(\.dismiss) var dismiss
 
     var body: some View {
-        Text("Test Date List!")
-            .onAppear(perform:{
-                Task{
-                    await loadTestDates()
+        VStack{
+            Text("Test Date List!")
+                .onAppear(perform:{
+                    Task{
+                        await loadTestDates()
+                    }
+                })
+            /*    .task {
+             await loadTestDates()
+             }*/
+            
+            Text("Records in list \(tdList.count)")
+                .onChange(of: patient){
+                    Task{
+                        await loadTestDates()
+                        
+                    }
                 }
-            })
-        /*    .task {
-                await loadTestDates()
-            }*/
-                      
-        Text("Records in list \(tdList.count)")
-            .onChange(of: patient){
-                Task{
-                    await loadTestDates()
+            
+            Table(tdList,selection: $selectedTDR){
+                TableColumn("Date"){ (tdRec: TestDateData) in
+                    if let theDate = tdRec.testdate {
+                        Text(theDate, format: .dateTime.month(.twoDigits).day(.twoDigits).year(.defaultDigits))
+                    }
+                    else{
+                        Text("No Date Available")
+                    }
+                    
+                    
                     
                 }
             }
-        
-        Table(tdList,selection: $selectedTDR){
-            TableColumn("Date"){ (tdRec: TestDateData) in
-                if let theDate = tdRec.testdate {
-                    Text(theDate, format: .dateTime.month(.twoDigits).day(.twoDigits).year(.defaultDigits))
-                }
-                else{
-                    Text("No Date Available")
-                }
-                
-                
-                
-            }
-        }
-        .frame(width: 300, height: 150)
-        .onChange(of: selectedTDR){
-            if let theID = $0{
-                print("Selected \(theID)")
-                if let theTD = tdList.first(where: {$0.id == theID}){
-                    selTDRec = theTD
-                    tablesDisabled = true
-                    showTD = true
+            .frame(width: 300, height: 150)
+            .onChange(of: selectedTDR){
+                if let theID = $0{
+                    print("Selected \(theID)")
+                    if let theTD = tdList.first(where: {$0.id == theID}){
+                        selTDRec = theTD
+                        tablesDisabled = true
+                        showTD = true
+                    }
                 }
             }
-        }
-        .sheet(isPresented: $showTD, onDismiss: {
-            if let idx = tdList.firstIndex(where: { $0.id == selTDRec.id }) {
-                tdList[idx] = selTDRec
+            .sheet(isPresented: $showTD, onDismiss: {
+                if let idx = tdList.firstIndex(where: { $0.id == selTDRec.id }) {
+                    tdList[idx] = selTDRec
+                }
+                selectedTDR = nil
+                tablesDisabled = false
+            }) {
+                TestDateView(theRec: $selTDRec)
+                    .frame(minWidth: 400, minHeight: 300)
+                    .padding()
             }
-            selectedTDR = nil
-            tablesDisabled = false
-        }) {
-            TestDateView(theRec: $selTDRec)
-                .frame(minWidth: 400, minHeight: 300)
-                .padding()
         }
-        
     }
     
     func loadTestDates() async{
