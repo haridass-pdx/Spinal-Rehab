@@ -17,7 +17,7 @@ struct PatientTestEditView: View {
         _theRec = theRec
         //  _tablesDisabled = tablesDisabled
         _originalRec = State(initialValue: theRec.wrappedValue)
-        print(_theRec)
+        //print(_theRec)
     }
 
     var body: some View {
@@ -27,6 +27,10 @@ struct PatientTestEditView: View {
                 ComboBoxView(theValue: $theRec.testname, suggestions: $nameList, prompt: "Test Name")
               //  TextField("Test Name", text: $theRec.testname)
                 TextField("Test Value", value: $theRec.testvalue, format: .number)
+                    .onChange(of: theRec.testvalue) {oldValue, newValue in
+                        let tempScore = getScore(for: newValue)
+                        
+                    }
       
                 TextField("Test Score", text: $theRec.testscore)
                     .padding(.bottom, 40.0)
@@ -65,6 +69,12 @@ struct PatientTestEditView: View {
             theRec = localRec
         }
 
+    }
+    
+    func getScore(for test: Double) -> String {
+        var score: String = ""
+        
+       return score
     }
     
 }
