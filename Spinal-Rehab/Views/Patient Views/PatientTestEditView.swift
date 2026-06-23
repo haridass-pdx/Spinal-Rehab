@@ -11,18 +11,21 @@ struct PatientTestEditView: View {
     @Binding var theRec: PatienttestData
     @Environment(\.dismiss) var dismiss
     @State var originalRec = PatienttestData()
+    @State var nameList: [String] = []
     
     init(theRec: Binding<PatienttestData>) {
         _theRec = theRec
         //  _tablesDisabled = tablesDisabled
         _originalRec = State(initialValue: theRec.wrappedValue)
+        print(_theRec)
     }
 
     var body: some View {
         VStack(alignment: .leading, spacing: 10.0){
             Form(){
                 Text("Test ID: \(theRec.id)")
-                TextField("Test Name", text: $theRec.testname)
+                ComboBoxView(theValue: $theRec.testname, suggestions: $nameList, prompt: "Test Name")
+              //  TextField("Test Name", text: $theRec.testname)
                 TextField("Test Value", value: $theRec.testvalue, format: .number)
       
                 TextField("Test Score", text: $theRec.testscore)
@@ -45,8 +48,11 @@ struct PatientTestEditView: View {
           
                 
             }
-            .frame(width: 300,height: 400, alignment: .init(horizontal: .center, vertical: .top))
+            .frame(width: 350,height: 400, alignment: .init(horizontal: .center, vertical: .top))
             Spacer()
+                .task {
+                    nameList = await test_tableClass.getTestNameList()
+                }
            
             
         }.navigationTitle("Back to Test Date")

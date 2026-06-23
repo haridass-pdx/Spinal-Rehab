@@ -113,5 +113,18 @@ class test_tableClass: pgClientClass {
         return result
         
     }
+    
+    class func getTestNameList() async -> [String]{
+        var result: [String] = []
+        let ttc = test_tableClass()
+        let sql = "SELECT name FROM public.test_table   ;"
+        result = await ttc.getResults(qry: sql)
+        
+
+        
+        
+     return result
+    }
+    
 }
 

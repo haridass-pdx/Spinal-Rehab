@@ -73,7 +73,7 @@ struct PatienttestData: Identifiable, Equatable, Hashable {
     mutating func readDictValues(){
          id = dictKeyToInt(key: "id", dict: dataDict)
         testname = dictKeyToStr(key: "testname", dict: dataDict)
-        testvalue = dictKeyToDouble(key: "id", dict: dataDict)
+        testvalue = dictKeyToDouble(key: "testvalue", dict: dataDict)
 
         testscore = dictKeyToStr(key: "testscore", dict: dataDict)
         testdate_id = dictKeyToInt(key: "testdate_id", dict: dataDict)
