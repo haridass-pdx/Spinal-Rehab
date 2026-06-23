@@ -113,17 +113,38 @@ class test_tableClass: pgClientClass {
         return result
         
     }
-    
     class func getTestNameList() async -> [String]{
         var result: [String] = []
         let ttc = test_tableClass()
         let sql = "SELECT name FROM public.test_table   ;"
         result = await ttc.getResults(qry: sql)
-        
-
-        
-        
+         
      return result
+    }
+
+    
+    func getTestTableItem(name: String) async -> test_tableData?{
+        var result: test_tableData?
+        let ttc = test_tableClass()
+        let qry = "SELECT * FROM public.test_table WHERE name = '\(name)\';"
+        await executeQuery(text: qry)
+        var thetest_table = test_tableData() // = EmployeeData()
+        
+        for item in dictList{
+            thetest_table.dictToRec(dict: item)
+            result = thetest_table
+        }
+      return result
+    }
+    
+       
+    class func getScoreForTest(testName: String, age: Int, Gender: String) async -> String{
+        var score: String = ""
+        let ttc = test_tableClass()
+        let result  = await ttc.getTestTableItem(name: testName)
+        
+        
+        return score
     }
     
 }

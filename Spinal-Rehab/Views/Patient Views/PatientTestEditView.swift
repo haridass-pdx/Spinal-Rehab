@@ -12,6 +12,7 @@ struct PatientTestEditView: View {
     @Environment(\.dismiss) var dismiss
     @State var originalRec = PatienttestData()
     @State var nameList: [String] = []
+    @FocusState private var isValueFocused: Bool
     
     init(theRec: Binding<PatienttestData>) {
         _theRec = theRec
@@ -27,8 +28,13 @@ struct PatientTestEditView: View {
                 ComboBoxView(theValue: $theRec.testname, suggestions: $nameList, prompt: "Test Name")
               //  TextField("Test Name", text: $theRec.testname)
                 TextField("Test Value", value: $theRec.testvalue, format: .number)
-                    .onChange(of: theRec.testvalue) {oldValue, newValue in
-                        let tempScore = getScore(for: newValue)
+                    .focused($isValueFocused)
+                    .onChange(of: isValueFocused) {oldValue, newValue in
+                        if(!newValue){
+                            Task{
+                                let tempScore = await getScore()
+                            }
+                        }
                         
                     }
       
@@ -71,12 +77,25 @@ struct PatientTestEditView: View {
 
     }
     
-    func getScore(for test: Double) -> String {
+    func getScore() async-> String {
         var score: String = ""
+        var gender: String = ""
+        var age: Int = 0
+        
+       // let ptc  = patientClass()
+        let result = await patientClass.getGenderAndAge(forId: theRec.patient_id)
+        gender = result.0
+        age = result.1
+        
+        let tempscore = await    test_tableClass.getScoreForTest(testName: theRec.testname, age: age, Gender: gender)
+      
+        
+                
         
        return score
     }
     
+        
 }
 
 #Preview {

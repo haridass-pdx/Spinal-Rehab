@@ -15,7 +15,7 @@ struct PatienttestData: Identifiable, Equatable, Hashable {
     var testvalue: Double = 0.0
     var testscore: String = ""
     var testdate_id: Int = 0
-    var pt_id: Int = 0
+    var patient_id: Int = 0
           
     var dataDict: DictListType = [:]
     
@@ -43,7 +43,7 @@ struct PatienttestData: Identifiable, Equatable, Hashable {
         lhs.testvalue == rhs.testvalue &&
         lhs.testscore == rhs.testscore &&
         lhs.testdate_id == rhs.testdate_id &&
-        lhs.pt_id == rhs.pt_id
+        lhs.patient_id == rhs.patient_id
     }
     
     func hash(into hasher: inout Hasher) {
@@ -77,7 +77,7 @@ struct PatienttestData: Identifiable, Equatable, Hashable {
 
         testscore = dictKeyToStr(key: "testscore", dict: dataDict)
         testdate_id = dictKeyToInt(key: "testdate_id", dict: dataDict)
-        pt_id = dictKeyToInt(key: "pt_id", dict: dataDict)
+        patient_id = dictKeyToInt(key: "patient_id", dict: dataDict)
   
     }
     
@@ -88,7 +88,7 @@ struct PatienttestData: Identifiable, Equatable, Hashable {
         localDict["testvalue"]?.strVal = String(testvalue)
         localDict["testscore"]?.strVal = testscore
         localDict["testdate_id"]?.strVal = String(testdate_id)
-        localDict["pt_id"]?.strVal = String(pt_id)
+        localDict["patient_id"]?.strVal = String(patient_id)
         self.dataDict = localDict
     }
 }

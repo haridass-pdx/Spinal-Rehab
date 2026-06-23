@@ -139,6 +139,21 @@ class patientClass: pgClientClass {
         }
         return result
     }
+    
+    class func getGenderAndAge(forId: Int) async->(String, Int){
+        var result: (String, Int) = ("", 0)
+        let ptc = patientClass()
+        let qry = "SELECT gender, age FROM patients WHERE id = \(forId);"
+        let resStr = await ptc.getResults(qry: qry)
+        
+        if(resStr.count == 2){
+            result.0 = resStr[0]
+            if let age = Int(resStr[1]){
+                result.1 = age
+            }
+        }
+        return result
+    }
 
     func buildPatientist() async -> [PatientData]{
         var text: String = ""
