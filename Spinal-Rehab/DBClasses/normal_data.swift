@@ -110,7 +110,7 @@ class normal_dataClass: pgClientClass {
     }
     
     
-    func buildPatientist() async -> [normalData]{
+    func buildNormalList() async -> [normalData]{
         var text: String = ""
         var result: [normalData] = []
         
@@ -127,5 +127,38 @@ class normal_dataClass: pgClientClass {
         return result
         
     }
+    
+    func getNormaData(tableID:  Int, gender: String) async-> normalData?{
+        var result: normalData?
+        let text: String = "SELECT * FROM public.normal_data WHERE testtable_id = \(tableID) and gender = '\(gender)';"
+        
+        _ = await executeQuery(text: text)
+      
+        var thenormal_data = normalData() // = EmployeeData()
+      
+        for item in dictList{
+            thenormal_data.dictToRec(dict: item)
+            result = thenormal_data
+        }
+
+        return result
+    }
+    
+    func getNormaData(tableID:  Int, gender: String, age:  Int) async-> normalData?{
+        var result: normalData?
+        let text: String = "SELECT * FROM public.normal_data WHERE testtable_id = \(tableID) and gender = '\(gender)' and \(age) between lowage and highage;"
+        
+        _ = await executeQuery(text: text)
+      
+        var thenormal_data = normalData() // = EmployeeData()
+      
+        for item in dictList{
+            thenormal_data.dictToRec(dict: item)
+            result = thenormal_data
+        }
+
+        return result
+    }
+    
 }
 

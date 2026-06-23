@@ -138,13 +138,61 @@ class test_tableClass: pgClientClass {
     }
     
        
-    class func getScoreForTest(testName: String, age: Int, Gender: String) async -> String{
+    class func getScoreForTest(testName: String, age: Int, Gender: String, Value: Double) async -> String{
         var score: String = ""
         let ttc = test_tableClass()
-        let result  = await ttc.getTestTableItem(name: testName)
-        
+        if let result  = await ttc.getTestTableItem(name: testName){
+            let ndc = normal_dataClass()
+            if result.agegroups{
+                if let ndr = await ndc.getNormaData(tableID: result.id, gender: Gender, age: age){
+                    score = getScoreFromValue(ndr: ndr, Value: Value, greaterIsBetter: result.greaterisbetter)
+                }
+                
+            }
+            else {
+                if let ndr = await ndc.getNormaData(tableID: result.id, gender: Gender){
+                    score = getScoreFromValue(ndr: ndr, Value: Value, greaterIsBetter: result.greaterisbetter)
+                }
+            }
+        }
         
         return score
+    }
+    
+    class func getScoreFromValue(ndr: normalData, Value: Double, greaterIsBetter: Bool) -> String{
+        var result : String = ""
+        
+        if(greaterIsBetter){
+            switch Value {
+            case let v where v > Double(ndr.excellent):
+                result = "Excellent"
+            case let v where v > Double(ndr.good):
+                result = "Good"
+            case let v where v > Double(ndr.fair):
+                result = "Fair"
+            case let v where v > Double(ndr.poor):
+                result = "Poor"
+            default: result = "Very Poor"
+            }
+            
+        }
+        else{
+            switch Value {
+            case let v where v < Double(ndr.excellent):
+                result = "Excellent"
+            case let v where v < Double(ndr.good):
+                result = "Good"
+            case let v where v < Double(ndr.fair):
+                result = "Fair"
+            case let v where v < Double(ndr.poor):
+                result = "Poor"
+            default: result = "Very Poor"
+            }
+            
+
+        }
+    
+        return result
     }
     
 }

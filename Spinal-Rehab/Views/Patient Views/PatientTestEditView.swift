@@ -87,7 +87,7 @@ struct PatientTestEditView: View {
         gender = result.0
         age = result.1
         
-        let tempscore = await    test_tableClass.getScoreForTest(testName: theRec.testname, age: age, Gender: gender)
+        score = await    test_tableClass.getScoreForTest(testName: theRec.testname, age: age, Gender: gender, Value: theRec.testvalue)
       
         
                 
