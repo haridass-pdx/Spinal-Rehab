@@ -412,10 +412,10 @@
             filePath = "Spinal-Rehab/Views/Patient Views/TestDateView.swift"
             startingColumnNumber = "9223372036854775807"
             endingColumnNumber = "9223372036854775807"
-            startingLineNumber = "112"
-            endingLineNumber = "112"
-            landmarkName = "TestDateView"
-            landmarkType = "14">
+            startingLineNumber = "139"
+            endingLineNumber = "139"
+            landmarkName = "buildTestList()"
+            landmarkType = "7">
          </BreakpointContent>
       </BreakpointProxy>
       <BreakpointProxy
@@ -428,10 +428,10 @@
             filePath = "Spinal-Rehab/Views/Patient Views/TestDateView.swift"
             startingColumnNumber = "9223372036854775807"
             endingColumnNumber = "9223372036854775807"
-            startingLineNumber = "22"
-            endingLineNumber = "22"
-            landmarkName = "TestDateView"
-            landmarkType = "14">
+            startingLineNumber = "24"
+            endingLineNumber = "24"
+            landmarkName = "init(theRec:)"
+            landmarkType = "7">
          </BreakpointContent>
       </BreakpointProxy>
       <BreakpointProxy
@@ -460,8 +460,8 @@
             filePath = "Spinal-Rehab/Views/Patient Views/TestDateView.swift"
             startingColumnNumber = "9223372036854775807"
             endingColumnNumber = "9223372036854775807"
-            startingLineNumber = "31"
-            endingLineNumber = "31"
+            startingLineNumber = "33"
+            endingLineNumber = "33"
             landmarkName = "body"
             landmarkType = "24">
          </BreakpointContent>
@@ -476,8 +476,8 @@
             filePath = "Spinal-Rehab/Views/Patient Views/PatientTestEditView.swift"
             startingColumnNumber = "9223372036854775807"
             endingColumnNumber = "9223372036854775807"
-            startingLineNumber = "64"
-            endingLineNumber = "64"
+            startingLineNumber = "77"
+            endingLineNumber = "77"
             landmarkName = "body"
             landmarkType = "24">
          </BreakpointContent>
@@ -486,14 +486,14 @@
          BreakpointExtensionID = "Xcode.Breakpoint.FileBreakpoint">
          <BreakpointContent
             uuid = "5D0FB901-260E-4CFC-9341-3C1B6661AD1C"
-            shouldBeEnabled = "Yes"
+            shouldBeEnabled = "No"
             ignoreCount = "0"
             continueAfterRunningActions = "No"
             filePath = "Spinal-Rehab/Views/Patient Views/PatientTestEditView.swift"
             startingColumnNumber = "9223372036854775807"
             endingColumnNumber = "9223372036854775807"
-            startingLineNumber = "81"
-            endingLineNumber = "81"
+            startingLineNumber = "102"
+            endingLineNumber = "102"
             landmarkName = "getScore()"
             landmarkType = "7">
          </BreakpointContent>
@@ -518,58 +518,200 @@
          BreakpointExtensionID = "Xcode.Breakpoint.FileBreakpoint">
          <BreakpointContent
             uuid = "F619D91A-1C04-4E91-A7B0-38A6334F0A09"
-            shouldBeEnabled = "Yes"
+            shouldBeEnabled = "No"
             ignoreCount = "0"
             continueAfterRunningActions = "No"
             filePath = "Spinal-Rehab/Views/Patient Views/PatientTestEditView.swift"
             startingColumnNumber = "9223372036854775807"
             endingColumnNumber = "9223372036854775807"
-            startingLineNumber = "90"
-            endingLineNumber = "90"
+            startingLineNumber = "111"
+            endingLineNumber = "111"
             landmarkName = "getScore()"
+            landmarkType = "7">
+         </BreakpointContent>
+      </BreakpointProxy>
+      <BreakpointProxy
+         BreakpointExtensionID = "Xcode.Breakpoint.FileBreakpoint">
+         <BreakpointContent
+            uuid = "B495995D-9626-475D-9B81-7C98E3461FDC"
+            shouldBeEnabled = "Yes"
+            ignoreCount = "0"
+            continueAfterRunningActions = "No"
+            filePath = "Spinal-Rehab/Views/Patient Views/TestDateListView.swift"
+            startingColumnNumber = "9223372036854775807"
+            endingColumnNumber = "9223372036854775807"
+            startingLineNumber = "132"
+            endingLineNumber = "132"
+            landmarkName = "addTestDate()"
+            landmarkType = "7">
+         </BreakpointContent>
+      </BreakpointProxy>
+      <BreakpointProxy
+         BreakpointExtensionID = "Xcode.Breakpoint.FileBreakpoint">
+         <BreakpointContent
+            uuid = "1F5BF642-083A-4DB4-8EE9-1A72C572E73D"
+            shouldBeEnabled = "Yes"
+            ignoreCount = "0"
+            continueAfterRunningActions = "No"
+            filePath = "Spinal-Rehab/Views/Patient Views/TestDateListView.swift"
+            startingColumnNumber = "9223372036854775807"
+            endingColumnNumber = "9223372036854775807"
+            startingLineNumber = "142"
+            endingLineNumber = "142"
+            landmarkName = "deleteTestDate()"
             landmarkType = "7">
             <Locations>
                <Location
-                  uuid = "F619D91A-1C04-4E91-A7B0-38A6334F0A09 - 9a369a46ca976afe"
+                  uuid = "1F5BF642-083A-4DB4-8EE9-1A72C572E73D - 5b5ecbb4ca61db08"
                   shouldBeEnabled = "Yes"
                   ignoreCount = "0"
                   continueAfterRunningActions = "No"
-                  symbolName = "(3) suspend resume partial function for Spinal_Rehab.PatientTestEditView.getScore() async -&gt; Swift.String"
+                  symbolName = "(1) suspend resume partial function for Spinal_Rehab.TestDateListView.deleteTestDate() async -&gt; ()"
                   moduleName = "Spinal-Rehab.debug.dylib"
                   usesParentBreakpointCondition = "Yes"
-                  urlString = "file:///Users/haridass/Active%20xCode%20Projects/Spinal%20Rehab/Spinal-Rehab/Spinal-Rehab/Views/Patient%20Views/PatientTestEditView.swift"
+                  urlString = "file:///Users/haridass/Active%20xCode%20Projects/Spinal%20Rehab/Spinal-Rehab/Spinal-Rehab/Views/Patient%20Views/TestDateListView.swift"
                   startingColumnNumber = "9223372036854775807"
                   endingColumnNumber = "9223372036854775807"
-                  startingLineNumber = "90"
-                  endingLineNumber = "90">
+                  startingLineNumber = "143"
+                  endingLineNumber = "143">
                </Location>
                <Location
-                  uuid = "F619D91A-1C04-4E91-A7B0-38A6334F0A09 - ca6fa6b3c03a84db"
+                  uuid = "1F5BF642-083A-4DB4-8EE9-1A72C572E73D - 5b5ecbb4ca61db08"
                   shouldBeEnabled = "Yes"
                   ignoreCount = "0"
                   continueAfterRunningActions = "No"
-                  symbolName = "(4) await resume partial function for Spinal_Rehab.PatientTestEditView.getScore() async -&gt; Swift.String"
+                  symbolName = "(1) suspend resume partial function for Spinal_Rehab.TestDateListView.deleteTestDate() async -&gt; ()"
                   moduleName = "Spinal-Rehab.debug.dylib"
                   usesParentBreakpointCondition = "Yes"
-                  urlString = "file:///Users/haridass/Active%20xCode%20Projects/Spinal%20Rehab/Spinal-Rehab/Spinal-Rehab/Views/Patient%20Views/PatientTestEditView.swift"
+                  urlString = "file:///Users/haridass/Active%20xCode%20Projects/Spinal%20Rehab/Spinal-Rehab/Spinal-Rehab/Views/Patient%20Views/TestDateListView.swift"
                   startingColumnNumber = "9223372036854775807"
                   endingColumnNumber = "9223372036854775807"
-                  startingLineNumber = "90"
-                  endingLineNumber = "90">
+                  startingLineNumber = "143"
+                  endingLineNumber = "143">
+               </Location>
+            </Locations>
+         </BreakpointContent>
+      </BreakpointProxy>
+      <BreakpointProxy
+         BreakpointExtensionID = "Xcode.Breakpoint.FileBreakpoint">
+         <BreakpointContent
+            uuid = "5D46C96C-8D61-4869-8CF2-F1062C894BEA"
+            shouldBeEnabled = "No"
+            ignoreCount = "0"
+            continueAfterRunningActions = "No"
+            filePath = "Spinal-Rehab/DBClasses/Patienttest.swift"
+            startingColumnNumber = "9223372036854775807"
+            endingColumnNumber = "9223372036854775807"
+            startingLineNumber = "62"
+            endingLineNumber = "62"
+            landmarkName = "deleteRec()"
+            landmarkType = "7">
+         </BreakpointContent>
+      </BreakpointProxy>
+      <BreakpointProxy
+         BreakpointExtensionID = "Xcode.Breakpoint.FileBreakpoint">
+         <BreakpointContent
+            uuid = "D30FFBBB-00C9-4EAB-ACE2-2498AA3883C1"
+            shouldBeEnabled = "No"
+            ignoreCount = "0"
+            continueAfterRunningActions = "No"
+            filePath = "Spinal-Rehab/Views/Patient Views/PatientTestEditView.swift"
+            startingColumnNumber = "9223372036854775807"
+            endingColumnNumber = "9223372036854775807"
+            startingLineNumber = "95"
+            endingLineNumber = "95"
+            landmarkName = "deleteRecord()"
+            landmarkType = "7">
+         </BreakpointContent>
+      </BreakpointProxy>
+      <BreakpointProxy
+         BreakpointExtensionID = "Xcode.Breakpoint.FileBreakpoint">
+         <BreakpointContent
+            uuid = "83906A06-DE30-44F8-97DB-0113841EA2E4"
+            shouldBeEnabled = "Yes"
+            ignoreCount = "0"
+            continueAfterRunningActions = "No"
+            filePath = "Spinal-Rehab/Views/Patient Views/TestDateView.swift"
+            startingColumnNumber = "9223372036854775807"
+            endingColumnNumber = "9223372036854775807"
+            startingLineNumber = "142"
+            endingLineNumber = "142"
+            landmarkName = "addtests()"
+            landmarkType = "7">
+            <Locations>
+               <Location
+                  uuid = "83906A06-DE30-44F8-97DB-0113841EA2E4 - de86ad2a97f19909"
+                  shouldBeEnabled = "Yes"
+                  ignoreCount = "0"
+                  continueAfterRunningActions = "No"
+                  symbolName = "(1) suspend resume partial function for Spinal_Rehab.TestDateView.addtests() async -&gt; ()"
+                  moduleName = "Spinal-Rehab.debug.dylib"
+                  usesParentBreakpointCondition = "Yes"
+                  urlString = "file:///Users/haridass/Active%20xCode%20Projects/Spinal%20Rehab/Spinal-Rehab/Spinal-Rehab/Views/Patient%20Views/TestDateView.swift"
+                  startingColumnNumber = "9223372036854775807"
+                  endingColumnNumber = "9223372036854775807"
+                  startingLineNumber = "142"
+                  endingLineNumber = "142">
                </Location>
                <Location
-                  uuid = "F619D91A-1C04-4E91-A7B0-38A6334F0A09 - d0775ca912f62afc"
+                  uuid = "83906A06-DE30-44F8-97DB-0113841EA2E4 - 3c52f09d307a1d1c"
                   shouldBeEnabled = "Yes"
                   ignoreCount = "0"
                   continueAfterRunningActions = "No"
-                  symbolName = "(5) suspend resume partial function for Spinal_Rehab.PatientTestEditView.getScore() async -&gt; Swift.String"
+                  symbolName = "(2) await resume partial function for Spinal_Rehab.TestDateView.addtests() async -&gt; ()"
                   moduleName = "Spinal-Rehab.debug.dylib"
                   usesParentBreakpointCondition = "Yes"
-                  urlString = "file:///Users/haridass/Active%20xCode%20Projects/Spinal%20Rehab/Spinal-Rehab/Spinal-Rehab/Views/Patient%20Views/PatientTestEditView.swift"
+                  urlString = "file:///Users/haridass/Active%20xCode%20Projects/Spinal%20Rehab/Spinal-Rehab/Spinal-Rehab/Views/Patient%20Views/TestDateView.swift"
                   startingColumnNumber = "9223372036854775807"
                   endingColumnNumber = "9223372036854775807"
-                  startingLineNumber = "90"
-                  endingLineNumber = "90">
+                  startingLineNumber = "142"
+                  endingLineNumber = "142">
+               </Location>
+            </Locations>
+         </BreakpointContent>
+      </BreakpointProxy>
+      <BreakpointProxy
+         BreakpointExtensionID = "Xcode.Breakpoint.FileBreakpoint">
+         <BreakpointContent
+            uuid = "5FBE0BAD-D34F-49C1-863A-7A084C908402"
+            shouldBeEnabled = "Yes"
+            ignoreCount = "0"
+            continueAfterRunningActions = "No"
+            filePath = "Spinal-Rehab/Views/Patient Views/TestDateView.swift"
+            startingColumnNumber = "9223372036854775807"
+            endingColumnNumber = "9223372036854775807"
+            startingLineNumber = "152"
+            endingLineNumber = "152"
+            landmarkName = "addtests()"
+            landmarkType = "7">
+            <Locations>
+               <Location
+                  uuid = "5FBE0BAD-D34F-49C1-863A-7A084C908402 - 1e2ecad371404cd9"
+                  shouldBeEnabled = "Yes"
+                  ignoreCount = "0"
+                  continueAfterRunningActions = "No"
+                  symbolName = "(3) suspend resume partial function for Spinal_Rehab.TestDateView.addtests() async -&gt; ()"
+                  moduleName = "Spinal-Rehab.debug.dylib"
+                  usesParentBreakpointCondition = "Yes"
+                  urlString = "file:///Users/haridass/Active%20xCode%20Projects/Spinal%20Rehab/Spinal-Rehab/Spinal-Rehab/Views/Patient%20Views/TestDateView.swift"
+                  startingColumnNumber = "9223372036854775807"
+                  endingColumnNumber = "9223372036854775807"
+                  startingLineNumber = "152"
+                  endingLineNumber = "152">
+               </Location>
+               <Location
+                  uuid = "5FBE0BAD-D34F-49C1-863A-7A084C908402 - 5df672fbdad6f0db"
+                  shouldBeEnabled = "Yes"
+                  ignoreCount = "0"
+                  continueAfterRunningActions = "No"
+                  symbolName = "(5) suspend resume partial function for Spinal_Rehab.TestDateView.addtests() async -&gt; ()"
+                  moduleName = "Spinal-Rehab.debug.dylib"
+                  usesParentBreakpointCondition = "Yes"
+                  urlString = "file:///Users/haridass/Active%20xCode%20Projects/Spinal%20Rehab/Spinal-Rehab/Spinal-Rehab/Views/Patient%20Views/TestDateView.swift"
+                  startingColumnNumber = "9223372036854775807"
+                  endingColumnNumber = "9223372036854775807"
+                  startingLineNumber = "152"
+                  endingLineNumber = "152">
                </Location>
             </Locations>
          </BreakpointContent>

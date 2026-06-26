@@ -13,12 +13,14 @@ struct PatientTestEditView: View {
     @State var originalRec = PatienttestData()
     @State var nameList: [String] = []
     @FocusState private var isValueFocused: Bool
+    @Binding var alterTest: Bool
     
-    init(theRec: Binding<PatienttestData>) {
+    init(theRec: Binding<PatienttestData>, alterTest: Binding<Bool>) {
         _theRec = theRec
         //  _tablesDisabled = tablesDisabled
         _originalRec = State(initialValue: theRec.wrappedValue)
         //print(_theRec)
+        _alterTest = alterTest
     }
 
     var body: some View {
@@ -33,12 +35,14 @@ struct PatientTestEditView: View {
                         if(!newValue){
                             Task{
                                 let tempScore = await getScore()
+                                theRec.testscore = tempScore
                             }
                         }
                         
                     }
       
                 TextField("Test Score", text: $theRec.testscore)
+                    .disabled(true)
                     .padding(.bottom, 40.0)
                 
                 HStack{
@@ -54,6 +58,15 @@ struct PatientTestEditView: View {
                         theRec = originalRec
                         dismiss()
                     }
+                    
+                    Button("Delete"){
+                        print("Delete")
+                       // theRec = originalRec
+                        deleteRecord()
+                        alterTest = true
+                        dismiss()
+                    }
+
                 }
           
                 
@@ -77,6 +90,14 @@ struct PatientTestEditView: View {
 
     }
     
+    func deleteRecord()  {
+        Task{
+            var localRec = theRec
+            await localRec.deleteRec()
+           // await   localRec.saveRec()
+            theRec = localRec
+        }
+    }
     func getScore() async-> String {
         var score: String = ""
         var gender: String = ""

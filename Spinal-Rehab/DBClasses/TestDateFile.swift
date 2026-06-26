@@ -65,6 +65,10 @@ struct TestDateData: Identifiable, Codable, Equatable, Hashable{
     }
     
 
+    func deleteRec() async {
+        let tdC = testDateClass()
+         await tdC.deleteRec(dict: self.dataDict)
+    }
     
     mutating func saveRec() async {
         self.recToDict()

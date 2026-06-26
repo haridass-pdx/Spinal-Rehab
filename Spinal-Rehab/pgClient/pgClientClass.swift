@@ -478,63 +478,49 @@ public class pgClientClass: ObservableObject {
     func saveNewRec(dict: DictListType) -> String {
         var text: String = "INSERT INTO \(tableName) ("
         var values: String = "VALUES ("
-        var idx: Int = 0
-        let keys = Array(dict.keys)
-        while idx < dict.count {
-            let key = keys[idx]
-            if !(key == primaryKey) {
-                if (idx > 0) && (idx != dict.count) {
-                    text.append(",")
-                    values.append(",")
-                }
-                // skip primary key value it's 0 and will be assigned by postgres
-                if !key.isEmpty {
-                    text.append(key)
-                }
-                
-                let val = dict[key]!.strVal
-                let type: pgTypes = pgTypes(rawValue: dict[key]!.type) ?? .void
-                if true // !val.isEmpty
-                {
-                    let tempVal = formatFieldByType(val: val, type: type)
-                    values.append("\(tempVal)")
-                } else {
-                    values.append("NULL")
-                }
+        var firstCol: Bool = true
+        for key in dict.keys {
+            if key == primaryKey { continue }
+            if key.isEmpty { continue }
+            if !firstCol {
+                text.append(",")
+                values.append(",")
             }
-            idx += 1
+            text.append(key)
+
+            let val = dict[key]!.strVal
+            let type: pgTypes = pgTypes(rawValue: dict[key]!.type) ?? .void
+            let tempVal = formatFieldByType(val: val, type: type)
+            values.append("\(tempVal)")
+            firstCol = false
         }
         text.append(") ")
         values.append(")")
         text.append(values)
         text.append(" RETURNING \(primaryKey) ")
-        
+
         return text
     }
     
     
     func updateRec(dict: DictListType) -> String {
         var text: String = "UPDATE \(tableName) SET "
-        var idx: Int = 0
-        var pkFirst: Bool = false
-        let keys: [String] = Array(dict.keys)
-        while idx < dict.count {
-            let key = keys[idx]
-            pkFirst = ((key == primaryKey) && (idx == 0))
-            if !(key == primaryKey) {
-                if (idx > 0) && (!pkFirst) {
-                    text.append(", ")
-                }
-                
-                let val = dict[key]!.strVal
-                let type: pgTypes = pgTypes(rawValue: dict[key]!.type) ?? .void
-                let tempVal = formatFieldByType(val: val, type: type)
-                text.append("\(key) = \(tempVal)")
+        var firstCol: Bool = true
+        for key in dict.keys {
+            if key == primaryKey { continue }
+            if key.isEmpty { continue }
+            if !firstCol {
+                text.append(", ")
             }
-            idx += 1
+
+            let val = dict[key]!.strVal
+            let type: pgTypes = pgTypes(rawValue: dict[key]!.type) ?? .void
+            let tempVal = formatFieldByType(val: val, type: type)
+            text.append("\(key) = \(tempVal)")
+            firstCol = false
         }
         text.append(" ")
-        
+
         return text
     }
     

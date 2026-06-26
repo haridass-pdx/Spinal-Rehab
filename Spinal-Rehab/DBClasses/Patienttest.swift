@@ -56,6 +56,14 @@ struct PatienttestData: Identifiable, Equatable, Hashable {
        id = await tdC.saveDictionary(dict: self.dataDict)
     }
     
+    
+    mutating func deleteRec() async {
+        self.recToDict()
+        let tdC = Patient_testClass()
+        await tdC.deleteRec(dict: self.dataDict)
+
+    }
+
     mutating func dictToRec(dict: DictListType)
     {
         dataDict = dict

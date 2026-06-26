@@ -7,6 +7,7 @@
 
 import SwiftUI
 
+
 struct TestDateView: View {
     @Binding var theRec: TestDateData
     @State private var originalRec = TestDateData()
@@ -14,6 +15,7 @@ struct TestDateView: View {
     @State var ptTestList: [PatienttestData] = []
     let fWidth = 150.0
     @State var fullName: String = ""
+    @State var alterTest: Bool = false
     
     init(theRec: Binding<TestDateData>) {
         _theRec = theRec
@@ -31,7 +33,16 @@ struct TestDateView: View {
                     fullName = await patientClass.fullName(forId: theRec.pt_id)
                     
                 }
-            VStack(alignment:.center){
+                .onChange(of: alterTest) {oldValue, newValue in
+                    if newValue {
+                        Task{
+                            await buildTestList()
+                            
+                        }
+                        alterTest = false
+                    }
+                }
+              VStack(alignment:.center){
                 Form{
                     VStack{
                         Text("Test Date ID : \(theRec.id)")
@@ -69,7 +80,7 @@ struct TestDateView: View {
                             
                         }.padding(.bottom, 10)
                         Text("Count \(ptTestList.count)")
-                        TestListView(theList: $ptTestList)
+                        TestListView(theList: $ptTestList, alterTest: $alterTest)
                         
                         HStack{
                             Spacer()
@@ -84,6 +95,22 @@ struct TestDateView: View {
                                 dismiss()
                             }
                             
+                          //  Spacer()
+                            Button("Delete") {
+                                Task {
+                                    await  theRec.deleteRec()
+                                    //theRec = nil
+                                    dismiss()
+                                }
+                            }
+                            Button("Add Tests") {
+                                Task {
+                                    //await  theRec.deleteRec()
+                                    //theRec = nil
+                                    await addtests()
+                                    dismiss()
+                                }
+                            }
                             Spacer()
                         }
                     }
@@ -109,6 +136,19 @@ struct TestDateView: View {
     func buildTestList() async {
         let ptc = Patient_testClass()
         ptTestList = await ptc.buildPtTestList(pttestid: theRec.id)
+    }
+    
+    func addtests() async {
+        let theList = await test_tableClass.getTestNameList()
+        //var ptTest = PatienttestData()
+        for test in theList {
+            var ptTest = PatienttestData()
+            ptTest.testname = test
+            ptTest.testdate_id = theRec.id
+            ptTest.patient_id = theRec.pt_id
+            await ptTest.saveRec()
+            ptTestList.append(ptTest)
+        }
     }
 }
 

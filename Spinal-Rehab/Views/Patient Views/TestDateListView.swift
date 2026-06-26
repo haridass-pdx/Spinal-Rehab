@@ -15,7 +15,8 @@ struct TestDateListView: View {
     @State  var selTDRec = TestDateData()
     @State private var showTD: Bool = false
     @Environment(\.dismiss) var dismiss
-
+    @State private var count = 0
+    
     var body: some View {
         VStack{
             Text("Test Date List!")
@@ -60,6 +61,42 @@ struct TestDateListView: View {
                     }
                 }
             }
+            
+            let fsize = 20.0
+            HStack(spacing: 20) {
+                
+                // Plus Button
+                Button {
+                    count += 1
+                    Task{
+                        await addTestDate()
+                    }
+                } label: {
+                    Image(systemName: "plus")
+                        .font(.title2)
+                        .bold()
+                        .frame(width: fsize, height: fsize)
+                }
+                // Minus Button
+               /* Button {
+                    count -= 1
+                    Task{
+                        await deleteTestDate()
+                    }
+                    
+                } label: {
+                    Image(systemName: "minus")
+                        .font(.title2)
+                        .bold()
+                        .frame(width: fsize, height: fsize)
+                    
+                }
+                .disabled(selectedTDR == nil)
+                */
+            }
+            
+            
+            
             .sheet(isPresented: $showTD, onDismiss: {
                 if let idx = tdList.firstIndex(where: { $0.id == selTDRec.id }) {
                     tdList[idx] = selTDRec
@@ -79,7 +116,7 @@ struct TestDateListView: View {
         await tdList = tdC.buildPatientist(ptid: patient.id)
         print("load test dates")
     }
-
+    
     func syncEditedRecord() {
         guard selTDRec.id != 0 else { return }
         
@@ -89,6 +126,25 @@ struct TestDateListView: View {
         } else {
             tdList.append(selTDRec)
         }
+    }
+    
+    func addTestDate() async{
+        var td = TestDateData()
+        td.testdate = Date()
+        td.pt_id = patient.id
+       await td.saveRec()
+        tdList.append(td)
+        
+        
+    }
+    
+    func deleteTestDate() async{
+        
+        if let index = tdList.firstIndex(of: selTDRec) {
+            tdList.remove(at: index)
+        }
+     await   selTDRec.deleteRec()
+
     }
     
 }

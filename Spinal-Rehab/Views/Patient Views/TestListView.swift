@@ -12,6 +12,7 @@ struct TestListView: View {
     @State var selectedTest: Int?
     @State var ptTestRec = PatienttestData()
     @State var showEdit: Bool = false
+    @Binding var alterTest: Bool 
     var body: some View {
         //  Text("Test List View")
         Table(theList,selection: $selectedTest){
@@ -39,8 +40,10 @@ struct TestListView: View {
                 }
             }
         }
+
+
         .navigationDestination(isPresented: $showEdit) {
-             PatientTestEditView(theRec: $ptTestRec)
+             PatientTestEditView(theRec: $ptTestRec, alterTest: $alterTest)
         }
 
     }
