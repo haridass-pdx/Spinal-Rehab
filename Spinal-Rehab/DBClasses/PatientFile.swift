@@ -140,16 +140,25 @@ class patientClass: pgClientClass {
         return result
     }
     
-    class func getGenderAndAge(forId: Int) async->(String, Int){
-        var result: (String, Int) = ("", 0)
+    struct returnRec{
+     var   gender: String = ""
+      var  age: Int = 0
+      var  dob: Date? = nil
+    }
+    
+    class func getGenderAgeDOB(forId: Int) async->returnRec{
+        var result = returnRec(gender: "", age: 0, dob: nil)
         let ptc = patientClass()
-        let qry = "SELECT gender, age FROM patients WHERE id = \(forId);"
+        let qry = "SELECT gender, age ,dob FROM patients WHERE id = \(forId);"
         let resStr = await ptc.getResults(qry: qry)
         
-        if(resStr.count == 2){
-            result.0 = resStr[0]
+        if(resStr.count == 3){
+            result.gender =  resStr[0]
             if let age = Int(resStr[1]){
-                result.1 = age
+                result.age = age
+            }
+            if let dob = StringToDate(dateString: resStr[2]){
+                result.dob = dob
             }
         }
         return result

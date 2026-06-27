@@ -412,10 +412,10 @@
             filePath = "Spinal-Rehab/Views/Patient Views/TestDateView.swift"
             startingColumnNumber = "9223372036854775807"
             endingColumnNumber = "9223372036854775807"
-            startingLineNumber = "139"
-            endingLineNumber = "139"
-            landmarkName = "buildTestList()"
-            landmarkType = "7">
+            startingLineNumber = "140"
+            endingLineNumber = "140"
+            landmarkName = "TestDateView"
+            landmarkType = "14">
          </BreakpointContent>
       </BreakpointProxy>
       <BreakpointProxy
@@ -476,8 +476,8 @@
             filePath = "Spinal-Rehab/Views/Patient Views/PatientTestEditView.swift"
             startingColumnNumber = "9223372036854775807"
             endingColumnNumber = "9223372036854775807"
-            startingLineNumber = "77"
-            endingLineNumber = "77"
+            startingLineNumber = "78"
+            endingLineNumber = "78"
             landmarkName = "body"
             landmarkType = "24">
          </BreakpointContent>
@@ -492,8 +492,8 @@
             filePath = "Spinal-Rehab/Views/Patient Views/PatientTestEditView.swift"
             startingColumnNumber = "9223372036854775807"
             endingColumnNumber = "9223372036854775807"
-            startingLineNumber = "102"
-            endingLineNumber = "102"
+            startingLineNumber = "112"
+            endingLineNumber = "112"
             landmarkName = "getScore()"
             landmarkType = "7">
          </BreakpointContent>
@@ -502,7 +502,7 @@
          BreakpointExtensionID = "Xcode.Breakpoint.FileBreakpoint">
          <BreakpointContent
             uuid = "447A9DB4-B48D-477C-9751-1609F5BE9FB9"
-            shouldBeEnabled = "Yes"
+            shouldBeEnabled = "No"
             ignoreCount = "0"
             continueAfterRunningActions = "No"
             filePath = "Spinal-Rehab/DBClasses/test_table.swift"
@@ -524,10 +524,10 @@
             filePath = "Spinal-Rehab/Views/Patient Views/PatientTestEditView.swift"
             startingColumnNumber = "9223372036854775807"
             endingColumnNumber = "9223372036854775807"
-            startingLineNumber = "111"
-            endingLineNumber = "111"
-            landmarkName = "getScore()"
-            landmarkType = "7">
+            startingLineNumber = "124"
+            endingLineNumber = "124"
+            landmarkName = "PatientTestEditView"
+            landmarkType = "14">
          </BreakpointContent>
       </BreakpointProxy>
       <BreakpointProxy
@@ -618,8 +618,8 @@
             filePath = "Spinal-Rehab/Views/Patient Views/PatientTestEditView.swift"
             startingColumnNumber = "9223372036854775807"
             endingColumnNumber = "9223372036854775807"
-            startingLineNumber = "95"
-            endingLineNumber = "95"
+            startingLineNumber = "96"
+            endingLineNumber = "96"
             landmarkName = "deleteRecord()"
             landmarkType = "7">
          </BreakpointContent>
@@ -634,13 +634,13 @@
             filePath = "Spinal-Rehab/Views/Patient Views/TestDateView.swift"
             startingColumnNumber = "9223372036854775807"
             endingColumnNumber = "9223372036854775807"
-            startingLineNumber = "142"
-            endingLineNumber = "142"
+            startingLineNumber = "143"
+            endingLineNumber = "143"
             landmarkName = "addtests()"
             landmarkType = "7">
             <Locations>
                <Location
-                  uuid = "83906A06-DE30-44F8-97DB-0113841EA2E4 - de86ad2a97f19909"
+                  uuid = "83906A06-DE30-44F8-97DB-0113841EA2E4 - de86ad2a97f199e6"
                   shouldBeEnabled = "Yes"
                   ignoreCount = "0"
                   continueAfterRunningActions = "No"
@@ -650,11 +650,11 @@
                   urlString = "file:///Users/haridass/Active%20xCode%20Projects/Spinal%20Rehab/Spinal-Rehab/Spinal-Rehab/Views/Patient%20Views/TestDateView.swift"
                   startingColumnNumber = "9223372036854775807"
                   endingColumnNumber = "9223372036854775807"
-                  startingLineNumber = "142"
-                  endingLineNumber = "142">
+                  startingLineNumber = "143"
+                  endingLineNumber = "143">
                </Location>
                <Location
-                  uuid = "83906A06-DE30-44F8-97DB-0113841EA2E4 - 3c52f09d307a1d1c"
+                  uuid = "83906A06-DE30-44F8-97DB-0113841EA2E4 - 3c52f09d307a1df3"
                   shouldBeEnabled = "Yes"
                   ignoreCount = "0"
                   continueAfterRunningActions = "No"
@@ -664,8 +664,8 @@
                   urlString = "file:///Users/haridass/Active%20xCode%20Projects/Spinal%20Rehab/Spinal-Rehab/Spinal-Rehab/Views/Patient%20Views/TestDateView.swift"
                   startingColumnNumber = "9223372036854775807"
                   endingColumnNumber = "9223372036854775807"
-                  startingLineNumber = "142"
-                  endingLineNumber = "142">
+                  startingLineNumber = "143"
+                  endingLineNumber = "143">
                </Location>
             </Locations>
          </BreakpointContent>
@@ -680,13 +680,13 @@
             filePath = "Spinal-Rehab/Views/Patient Views/TestDateView.swift"
             startingColumnNumber = "9223372036854775807"
             endingColumnNumber = "9223372036854775807"
-            startingLineNumber = "152"
-            endingLineNumber = "152"
-            landmarkName = "addtests()"
-            landmarkType = "7">
+            startingLineNumber = "153"
+            endingLineNumber = "153"
+            landmarkName = "TestDateView"
+            landmarkType = "14">
             <Locations>
                <Location
-                  uuid = "5FBE0BAD-D34F-49C1-863A-7A084C908402 - 1e2ecad371404cd9"
+                  uuid = "5FBE0BAD-D34F-49C1-863A-7A084C908402 - 1e2ecad371404cba"
                   shouldBeEnabled = "Yes"
                   ignoreCount = "0"
                   continueAfterRunningActions = "No"
@@ -696,11 +696,11 @@
                   urlString = "file:///Users/haridass/Active%20xCode%20Projects/Spinal%20Rehab/Spinal-Rehab/Spinal-Rehab/Views/Patient%20Views/TestDateView.swift"
                   startingColumnNumber = "9223372036854775807"
                   endingColumnNumber = "9223372036854775807"
-                  startingLineNumber = "152"
-                  endingLineNumber = "152">
+                  startingLineNumber = "153"
+                  endingLineNumber = "153">
                </Location>
                <Location
-                  uuid = "5FBE0BAD-D34F-49C1-863A-7A084C908402 - 5df672fbdad6f0db"
+                  uuid = "5FBE0BAD-D34F-49C1-863A-7A084C908402 - 5df672fbdad6f0b8"
                   shouldBeEnabled = "Yes"
                   ignoreCount = "0"
                   continueAfterRunningActions = "No"
@@ -710,8 +710,8 @@
                   urlString = "file:///Users/haridass/Active%20xCode%20Projects/Spinal%20Rehab/Spinal-Rehab/Spinal-Rehab/Views/Patient%20Views/TestDateView.swift"
                   startingColumnNumber = "9223372036854775807"
                   endingColumnNumber = "9223372036854775807"
-                  startingLineNumber = "152"
-                  endingLineNumber = "152">
+                  startingLineNumber = "153"
+                  endingLineNumber = "153">
                </Location>
             </Locations>
          </BreakpointContent>

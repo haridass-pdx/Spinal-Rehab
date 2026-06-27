@@ -36,6 +36,7 @@ struct TestDateView: View {
                 .onChange(of: alterTest) {oldValue, newValue in
                     if newValue {
                         Task{
+                            print("rebuilding test list")
                             await buildTestList()
                             
                         }

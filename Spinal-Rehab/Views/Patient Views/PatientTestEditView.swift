@@ -47,9 +47,12 @@ struct PatientTestEditView: View {
                 
                 HStack{
                     Button("Save"){
-                    print("Save")
-                      saveRecord()
-                   dismiss()
+                        print("Save")
+                        Task {
+                            await saveRecord()
+                            alterTest = true
+                            dismiss()
+                        }
                 }
                    .disabled(theRec == originalRec)
                     
@@ -62,9 +65,11 @@ struct PatientTestEditView: View {
                     Button("Delete"){
                         print("Delete")
                        // theRec = originalRec
-                        deleteRecord()
-                        alterTest = true
-                        dismiss()
+                        Task {
+                            await deleteRecord()
+                            alterTest = true
+                            dismiss()
+                        }
                     }
 
                 }
@@ -81,32 +86,31 @@ struct PatientTestEditView: View {
         }.navigationTitle("Back to Test Date")
     }
     
-    func saveRecord()  {
-        Task{
-            var localRec = theRec
-            await   localRec.saveRec()
-            theRec = localRec
-        }
-
+    func saveRecord() async {
+        var localRec = theRec
+        await localRec.saveRec()
+        theRec = localRec
     }
     
-    func deleteRecord()  {
-        Task{
-            var localRec = theRec
-            await localRec.deleteRec()
-           // await   localRec.saveRec()
-            theRec = localRec
-        }
+    func deleteRecord() async {
+        var localRec = theRec
+        await localRec.deleteRec()
+       // await   localRec.saveRec()
+        theRec = localRec
     }
+    
     func getScore() async-> String {
         var score: String = ""
         var gender: String = ""
         var age: Int = 0
-        
+
        // let ptc  = patientClass()
-        let result = await patientClass.getGenderAndAge(forId: theRec.patient_id)
-        gender = result.0
-        age = result.1
+        let result = await patientClass.getGenderAgeDOB(forId: theRec.patient_id)
+        gender = result.gender
+        age = result.age
+        if age == 0, let dob = result.dob {
+            age = calculateAge(birthDate: dob)
+        }
         
         score = await    test_tableClass.getScoreForTest(testName: theRec.testname, age: age, Gender: gender, Value: theRec.testvalue)
       

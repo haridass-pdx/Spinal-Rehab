@@ -16,6 +16,7 @@ struct PatientEditView: View {
     @Environment(\.dismiss) var dismiss
 
     init(patient: Binding<PatientData>, tablesDisabled: Binding<Bool>){
+     
         _patient = patient
         _tablesDisabled = tablesDisabled
         _originalPatient = State(initialValue: patient.wrappedValue)
@@ -28,6 +29,14 @@ struct PatientEditView: View {
                     .font(.title3)
                     .padding(.horizontal)
                 Text("Patient ID: \(patient.id)")
+                    .task{
+                        if(patient.age == 0){
+                            if let dob = patient.dob{
+                                patient.age = calculateAge(birthDate: dob)
+                            }
+                           
+                        }
+                    }
                 Form{
                     HStack{
                         TextField("First Name", text: $patient.firstname)

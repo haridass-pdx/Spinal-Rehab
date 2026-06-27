@@ -116,7 +116,7 @@ class test_tableClass: pgClientClass {
     class func getTestNameList() async -> [String]{
         var result: [String] = []
         let ttc = test_tableClass()
-        let sql = "SELECT name FROM public.test_table   ;"
+        let sql = "SELECT name FROM public.test_table order by id  ;"
         result = await ttc.getResults(qry: sql)
          
      return result
@@ -144,6 +144,7 @@ class test_tableClass: pgClientClass {
         if let result  = await ttc.getTestTableItem(name: testName){
             let ndc = normal_dataClass()
             if result.agegroups{
+                
                 if let ndr = await ndc.getNormaData(tableID: result.id, gender: Gender, age: age){
                     score = getScoreFromValue(ndr: ndr, Value: Value, greaterIsBetter: result.greaterisbetter)
                 }
