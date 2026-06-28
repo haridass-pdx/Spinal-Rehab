@@ -13,7 +13,7 @@ struct test_tableData: Identifiable, Equatable, Hashable {
     var id: Int = 0
     var name: String = ""
     var description: String = ""
-    var testflag: Bool = false
+    var testflag: Int = 0
     var agegroups: Bool = false
     var greaterisbetter: Bool = false
     var dataDict: DictListType = [:]
@@ -66,7 +66,7 @@ struct test_tableData: Identifiable, Equatable, Hashable {
         id = dictKeyToInt(key: "id", dict: dataDict)
         name = dictKeyToStr(key: "name", dict: dataDict)
         description = dictKeyToStr(key: "description", dict: dataDict)
-        testflag = dictKeyToBool(key: "testflag", dict: dataDict)
+        testflag = dictKeyToInt(key: "testflag", dict: dataDict)
         agegroups = dictKeyToBool(key: "agegroups", dict: dataDict)
         greaterisbetter = dictKeyToBool(key: "greaterisbetter", dict: dataDict)
     }
@@ -76,7 +76,7 @@ struct test_tableData: Identifiable, Equatable, Hashable {
         localDict["id"]?.strVal = String(id)
         localDict["name"]?.strVal = name
         localDict["description"]?.strVal = description
-        localDict["testflag"]?.strVal = boolToString(bool: testflag)
+        localDict["testflag"]?.strVal = String(testflag)
         localDict["agegroups"]?.strVal = boolToString(bool: agegroups)
         localDict["greaterisbetter"]?.strVal = boolToString(bool: greaterisbetter)
         

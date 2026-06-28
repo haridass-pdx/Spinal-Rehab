@@ -16,7 +16,7 @@ struct normalData: Identifiable, Codable, Equatable, Hashable {
     var good: Int = 0
     var fair: Int = 0
     var poor: Int = 0
-    var veryPoor: Int = 0
+    var verypoor: Int = 0
     var gender: String = ""
     var agerange: String = ""
     var lowage: Int = 0
@@ -28,8 +28,9 @@ struct normalData: Identifiable, Codable, Equatable, Hashable {
 
     // Only stored scalars participate in Codable; dataDict is the cached column-info sidecar.
     enum CodingKeys: String, CodingKey {
-        case id, mean, excellent, good, fair, poor, veryPoor,
-             gender, agerange, lowage, highage, normid, testtable_id
+        case id, mean, excellent, good, fair, poor, verypoor, gender
+        case agerange = "agerange"   // DB column is age_range; Swift property is agerange
+        case lowage, highage, normid, testtable_id
     }
 
     init(){
@@ -37,6 +38,10 @@ struct normalData: Identifiable, Codable, Equatable, Hashable {
         if let info = ColumnMetadataCache.shared.getInfo(for: "normal_data") {
             initDictionary(colNames: info.colNames, colTypes: info.colTypes)
         }
+    }
+    
+    func description() -> String {
+        return " ID: \(self.id), mean:\(self.mean), excellent: \(self.excellent), good: \(self.good), fair: \(self.fair), poor: \(self.poor), verypoor: \(self.verypoor) , gender: \(self.gender), agerange: \(self.agerange), lowage: \(self.lowage), highage: \(self.highage), normid: \(self.normid), testtable_id: \(self.testtable_id) \n"
     }
 
     
@@ -57,7 +62,7 @@ struct normalData: Identifiable, Codable, Equatable, Hashable {
         lhs.good == rhs.good &&
         lhs.fair == rhs.fair &&
         lhs.poor == rhs.poor &&
-        lhs.veryPoor == rhs.veryPoor &&
+        lhs.verypoor == rhs.verypoor &&
         lhs.gender == rhs.gender &&
         lhs.agerange == rhs.agerange &&
         lhs.lowage == rhs.lowage &&
@@ -126,6 +131,23 @@ class normal_dataClass: pgClientClass {
 
         return result
         
+    }
+    
+    func buildNormalList(id: Int) async -> [normalData]{
+        var text: String = ""
+        var result: [normalData] = []
+        
+        text = "SELECT * FROM public.normal_data where testtable_id = \(id) ORDER BY id ASC ;"
+        
+        await executeQuery(text: text)
+        var thenormal_data = normalData()
+        
+        for item in dictList{
+            thenormal_data.dictToRec(dict: item)
+            result.append(thenormal_data)
+        }
+
+        return result
     }
     
     func getNormaData(tableID:  Int, gender: String) async-> normalData?{

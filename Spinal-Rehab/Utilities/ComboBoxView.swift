@@ -36,7 +36,7 @@ struct ComboBoxView: View {
                     }
                 }
             } label: {
-                Image(systemName:  "")//"chevron.down")
+                Image(systemName: "chevron.down")
                     .foregroundColor(.gray)
                     .padding(.trailing, 8)
             }
