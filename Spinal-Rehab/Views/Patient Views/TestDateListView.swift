@@ -14,6 +14,8 @@ struct TestDateListView: View {
     @State private var selectedTDR: Int? // patient.ID?
     @State  var selTDRec = TestDateData()
     @State private var showTD: Bool = false
+    @State private var showReport: Bool = false
+  
     @Environment(\.dismiss) var dismiss
     @State private var count = 0
     
@@ -57,7 +59,7 @@ struct TestDateListView: View {
                     if let theTD = tdList.first(where: {$0.id == theID}){
                         selTDRec = theTD
                         tablesDisabled = true
-                        showTD = true
+                        // showTD = true
                     }
                 }
             }
@@ -77,24 +79,30 @@ struct TestDateListView: View {
                         .bold()
                         .frame(width: fsize, height: fsize)
                 }
-                // Minus Button
-               /* Button {
-                    count -= 1
-                    Task{
-                        await deleteTestDate()
-                    }
+               
+                Button("Edit") {
                     
-                } label: {
-                    Image(systemName: "minus")
-                        .font(.title2)
-                        .bold()
-                        .frame(width: fsize, height: fsize)
-                    
+                    showTD = true
+
                 }
                 .disabled(selectedTDR == nil)
-                */
+                
+                Button("Report"){
+                    showReport = true
+                }
+                .disabled(selectedTDR == nil)
+              
+                
             }
-            
+            .sheet(isPresented: $showReport, onDismiss: {
+                if let idx = tdList.firstIndex(where: { $0.id == selTDRec.id }) {
+                    tdList[idx] = selTDRec
+                }
+                selectedTDR = nil
+                tablesDisabled = false
+            })  {
+                PtReportView(theRec: $selTDRec)
+            }
             
             
             .sheet(isPresented: $showTD, onDismiss: {
