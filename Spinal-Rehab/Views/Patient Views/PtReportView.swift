@@ -10,26 +10,39 @@ import SwiftUI
 struct PtReportView: View {
     @Binding var theRec: TestDateData
     @Environment(\.dismiss) var dismiss
-    @State private var text: String = ""
-    
-   // theRec.testdate
+    @State private var html: String = ""
+    @State private var isLoading = true
+    @State private var engine = PDFReportEngine()
 
     var body: some View {
-        VStack {
-            Text("Report View")
-                .padding(10)
-                .font(.title2)
-                .task {
-                   text = await ReportDataClass.getReportData(reportID: 1)
-                }
-            TextEditor(text: $text)
-                .padding(10)
-            Button("Close") {
-                dismiss()
+        VStack(spacing: 0) {
+            HStack {
+                Text("Performance Report").font(.title2)
+                Spacer()
+                Button("Export PDF…") { engine.exportPDF(html, suggestedName: "Performance Report") }
+                    .disabled(html.isEmpty)
+                Button("Print…") { engine.printHTML(html) }
+                    .disabled(html.isEmpty)
+                    .keyboardShortcut("p")
+                Button("Close") { dismiss() }
             }
             .padding(10)
+            Divider()
+
+            if isLoading {
+                ProgressView("Building report…")
+                    .frame(maxWidth: .infinity, maxHeight: .infinity)
+            } else {
+                HTMLPreviewView(htmlContent: html)
+            }
         }
-       .frame(width: 600,height: 600, alignment: .init(horizontal: .center, vertical: .top))
+        .frame(minWidth: 700, minHeight: 800)
+        .task(id: theRec.id) {
+            isLoading = true
+            let values = await ReportContext.build(testDate: theRec)
+            html = ReportRenderer.fullHTML(values: values)
+            isLoading = false
+        }
     }
 }
 
