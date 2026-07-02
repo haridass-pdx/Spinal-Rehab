@@ -11,24 +11,29 @@ import WebKit
 
 struct HTMLPreviewView: NSViewRepresentable {
     let htmlContent: String
-    
+    /// Called once with the underlying web view so the parent can print/export it.
+    var onMakeWebView: ((WKWebView) -> Void)? = nil
+
+    func makeCoordinator() -> Coordinator { Coordinator() }
+
+    final class Coordinator {
+        var loadedHTML: String?
+    }
+
     func makeNSView(context: Context) -> WKWebView {
         let webView = WKWebView()
-        webView.setValue(false, forKey: "drawsBackground") // Matches your app theme background
+        webView.setValue(false, forKey: "drawsBackground") // match app theme background
+        if let onMakeWebView {
+            // Defer out of the view-update cycle to avoid mutating parent state mid-update.
+            DispatchQueue.main.async { onMakeWebView(webView) }
+        }
         return webView
     }
-    
+
     func updateNSView(_ nsView: WKWebView, context: Context) {
-        // Inject a basic font layout just for the on-screen preview bounds
-        let systemStyledHTML = """
-        <style>
-            body { font-family: -apple-system; font-size: 13px; color: currentColor; }
-            table { width: 100%; border-collapse: collapse; margin: 12px 0; }
-            th { background: rgba(0,0,0,0.05); text-align: left; padding: 6px; border-bottom: 2px solid rgba(0,0,0,0.1); }
-            td { padding: 6px; border-bottom: 1px solid rgba(0,0,0,0.05); }
-        </style>
-        \(htmlContent)
-        """
-        nsView.loadHTMLString(systemStyledHTML, baseURL: nil)
+        // Load the full document as-is; its CSS covers both screen and @page print.
+        guard context.coordinator.loadedHTML != htmlContent else { return }
+        context.coordinator.loadedHTML = htmlContent
+        nsView.loadHTMLString(htmlContent, baseURL: nil)
     }
 }

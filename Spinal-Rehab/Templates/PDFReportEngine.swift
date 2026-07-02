@@ -11,11 +11,15 @@ import WebKit
 import AppKit
 import UniformTypeIdentifiers
 
-/// Renders an HTML document with WebKit and emits it to **both** the printer and a
-/// PDF file through a single `NSPrintOperation` pipeline. Using one pipeline for
-/// both outputs guarantees the printed page and the saved PDF are laid out and
-/// paginated identically — which `WKWebView.createPDF()` does not reliably do for
-/// multi-page documents.
+/// Loads an HTML document into a headless `WKWebView` and, once loaded, prints or
+/// exports it through `NSPrintOperation`.
+///
+/// The operation is run as a **sheet** on the key window (`runModal(for:)`), not
+/// app-modal (`run()`). This matters: WebKit only paints into the print context when
+/// the operation is driven through a window's sheet run loop — `run()` on an
+/// unhosted web view spools blank pages. Under the debugger this path may pause once
+/// on a benign WebKit print assertion (Resume continues); it does not occur in a
+/// normal, non-debug run.
 @MainActor
 final class PDFReportEngine: NSObject {
 
@@ -30,32 +34,16 @@ final class PDFReportEngine: NSObject {
 
     // MARK: - Public API
 
-    /// Print a full HTML document (native print panel, which also offers "Save as PDF").
     func printHTML(_ fullHTML: String) {
         run(html: fullHTML, output: .print)
     }
 
-    /// Export a full HTML document straight to a chosen PDF file (no print panel).
     func exportPDF(_ fullHTML: String, suggestedName: String = "Report") {
         let panel = NSSavePanel()
         panel.allowedContentTypes = [.pdf]
         panel.nameFieldStringValue = "\(suggestedName).pdf"
-        panel.begin { [weak self] response in
-            guard response == .OK, let url = panel.url else { return }
-            self?.run(html: fullHTML, output: .savePDF(url))
-        }
-    }
-
-    /// Backward-compatible entry point used by the older demo views: wraps plain
-    /// text in a minimal page. Prefer `printHTML`/`exportPDF` with real HTML.
-    func processReport(text: String, printImmediately: Bool) {
-        let body = text.replacingOccurrences(of: "\n", with: "<br>")
-        let html = Self.wrap(body: body, css: Self.plainTextCSS)
-        if printImmediately {
-            printHTML(html)
-        } else {
-            exportPDF(html, suggestedName: String(text.prefix(15)).trimmingCharacters(in: .whitespacesAndNewlines))
-        }
+        guard panel.runModal() == .OK, let url = panel.url else { return }
+        run(html: fullHTML, output: .savePDF(url))
     }
 
     // MARK: - HTML document assembly
@@ -71,11 +59,6 @@ final class PDFReportEngine: NSObject {
         </html>
         """
     }
-
-    static let plainTextCSS = """
-        @page { size: letter; margin: 0.75in; }
-        body { font-family: -apple-system, "Helvetica Neue", sans-serif; font-size: 12pt; line-height: 1.5; color: #111; }
-        """
 
     // MARK: - Core pipeline
 
@@ -109,30 +92,30 @@ final class PDFReportEngine: NSObject {
 extension PDFReportEngine: WKNavigationDelegate {
     func webView(_ webView: WKWebView, didFinish navigation: WKNavigation!) {
         guard let output = pending else { return }
-        let info = makePrintInfo()
+        pending = nil // fire once
 
+        let info = makePrintInfo()
+        let op: NSPrintOperation
         switch output {
         case .print:
-            let op = webView.printOperation(with: info)
+            op = webView.printOperation(with: info)
             op.showsPrintPanel = true
             op.showsProgressPanel = true
-            if let window = NSApp.keyWindow {
-                op.runModal(for: window,
-                            delegate: self,
-                            didRun: #selector(printOperation(_:didRun:contextInfo:)),
-                            contextInfo: nil)
-            } else {
-                op.run()
-                cleanup()
-            }
-
         case .savePDF(let url):
-            // Print-to-PDF: same pagination as the printer, written silently to disk.
             info.jobDisposition = .save
             info.dictionary()[NSPrintInfo.AttributeKey.jobSavingURL] = url
-            let op = webView.printOperation(with: info)
+            op = webView.printOperation(with: info)
             op.showsPrintPanel = false
             op.showsProgressPanel = false
+        }
+
+        // Sheet-drive the operation so WebKit paints into the print context.
+        if let window = NSApp.keyWindow {
+            op.runModal(for: window,
+                        delegate: self,
+                        didRun: #selector(printOperation(_:didRun:contextInfo:)),
+                        contextInfo: nil)
+        } else {
             op.run()
             cleanup()
         }

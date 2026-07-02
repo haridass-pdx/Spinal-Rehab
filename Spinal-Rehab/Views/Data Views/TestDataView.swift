@@ -13,11 +13,15 @@ struct TestDataView: View {
     @State private var testEditRec = test_tableData()
     @State private var selectedTest: Int?
     @State private var showTestEdit: Bool = false
+    @State private var physicianList: [PhysicianRec] = []
+    @State private var selectedDr: Int?
     var body: some View {
-        VStack{
+        VStack( spacing: 10){
             Text("Test List")
+                .font(.title2)
                 .task {
                     await getTestList()
+                    await getPhysicianList()
                 }
             Table(testList, selection: $selectedTest){
                 TableColumn("Test Name", value: \.name)
@@ -35,8 +39,16 @@ struct TestDataView: View {
                     .navigationTitle(Text("Back to List"))
                 
             }
+            Spacer()
+            Text("Physician List")
+                .font(.title2)
+              
+            Table(physicianList, selection: $selectedDr){
+                TableColumn("Dr Name", value: \.fullname)
+            }
+            Spacer()
         }
-        .frame(width: 300.0, height: 300.0)
+        .frame(width: 300.0, height: 600.0)
     }
     
     
@@ -45,6 +57,12 @@ struct TestDataView: View {
         let result = await ttc.buildTesttist()
         testList = result
         
+    }
+    
+    func getPhysicianList()  async {
+        let phc = physicianClass()
+        let result = await phc.buildPhysicianList()
+        physicianList = result
     }
 }
 

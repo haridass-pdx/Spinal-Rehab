@@ -39,6 +39,7 @@ extension SpinalReportSlice {
 
     static let sampleValues: [String: String] = {
         var v: [String: String] = [
+            "clinic_logo": ReportRenderer.logoImageTag(named: "ClinicLogo"),
             "report_date": "Feb 14, 2023",
             "patient_name": "Ms. J. Smith",
             "age": "51",

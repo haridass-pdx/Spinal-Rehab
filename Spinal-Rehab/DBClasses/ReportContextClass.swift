@@ -48,6 +48,7 @@ enum ReportContext {
         var age = demo.age
         if age == 0, let dob = demo.dob { age = calculateAge(birthDate: dob) }
 
+        v["clinic_logo"] = ReportRenderer.logoImageTag(named: "ClinicLogo")
         v["patient_name"] = name.trimmingCharacters(in: .whitespaces).isEmpty ? "The patient" : name
         v["gender"] = demo.gender.isEmpty ? "—" : demo.gender
         v["age"] = String(age)
@@ -59,11 +60,6 @@ enum ReportContext {
 
         // Patient test results for this date
         let rows = await Patient_testClass().buildPtTestList(pttestid: testDate.id)
-
-        // TEMP diagnostics — remove once slot matching is confirmed.
-        print("[ReportContext] pt=\(testDate.pt_id) date=\(testDate.id) flags: cervical=\(testDate.cervical) lumbar=\(testDate.lumbar) cardio=\(testDate.cardio)")
-        print("[ReportContext] patient_test rows (\(rows.count)): " +
-              rows.map { "\"\($0.testname)\"=\($0.testvalue)[\($0.testscore)]" }.joined(separator: ", "))
 
         var findings = ""
         var tables = ""
@@ -121,11 +117,7 @@ enum ReportContext {
         guard let row = rows.first(where: { r in
             let name = r.testname.lowercased()
             return slot.keywords.contains { name.contains($0) }
-        }) else {
-            print("[ReportContext] slot \(slot.keywords): NO MATCH")
-            return nil
-        }
-        print("[ReportContext] slot \(slot.keywords): matched \"\(row.testname)\"")
+        }) else { return nil }
 
         var rating = row.testscore.trimmingCharacters(in: .whitespaces)
         if rating.isEmpty {
@@ -141,12 +133,8 @@ enum ReportContext {
     private static func table(for r: Resolved, title: String?) async -> String? {
         guard let title else { return nil }
         let ttc = test_tableClass()
-        guard let def = await ttc.getTestTableItem(name: r.testName) else {
-            print("[ReportContext] table: no test_table row for \"\(r.testName)\"")
-            return nil
-        }
+        guard let def = await ttc.getTestTableItem(name: r.testName) else { return nil }
         let records = await normal_dataClass().buildNormalList(id: def.id)
-        print("[ReportContext] table \"\(r.testName)\" (id=\(def.id), greaterIsBetter=\(def.greaterisbetter)): \(records.count) normative rows")
         guard !records.isEmpty else { return nil }
         return ReportRenderer.normativeTable(title: title,
                                              records: records,

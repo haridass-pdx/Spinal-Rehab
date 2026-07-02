@@ -11,6 +11,7 @@
 //
 
 import Foundation
+import AppKit
 
 enum ReportRenderer {
 
@@ -18,6 +19,17 @@ enum ReportRenderer {
     static func fullHTML(values: [String: String]) -> String {
         let body = ParsedTemplate(rawText: bodyTemplate).render(with: values)
         return PDFReportEngine.wrap(body: body, css: reportCSS)
+    }
+
+    /// An `<img>` tag with the named asset-catalog image embedded as a base64 data
+    /// URL (works with `loadHTMLString`, no file access). Returns "" if not found,
+    /// so the cover page still renders text-only when the logo is missing.
+    static func logoImageTag(named name: String) -> String {
+        guard let img = NSImage(named: name),
+              let tiff = img.tiffRepresentation,
+              let rep = NSBitmapImageRep(data: tiff),
+              let png = rep.representation(using: .png, properties: [:]) else { return "" }
+        return "<img class=\"tp-logo\" src=\"data:image/png;base64,\(png.base64EncodedString())\">"
     }
 
     // MARK: - Normative tables (data-driven from normalData)
@@ -95,6 +107,14 @@ enum ReportRenderer {
     // MARK: - Body template (this is what would live in reports.thetext)
 
     static let bodyTemplate = """
+    <div class="titlepage">
+        {clinic_logo}
+        <p class="tp-heading">Fitness Evaluation and Rehabilitation Plan</p>
+        <p class="tp-phase">Phase 1</p>
+        <p class="tp-patient">{patient_name}</p>
+    </div>
+    <div class="blankpage">&nbsp;</div>
+
     <h1>Cervical, Lumbar &amp; Cardiovascular Physical Performance Test Report</h1>
     <p class="subtitle">{report_date}</p>
 
@@ -118,7 +138,14 @@ enum ReportRenderer {
 
     static let reportCSS = """
     @page { size: letter; margin: 0.75in; }
-    body { font-family: "Times New Roman", Georgia, serif; font-size: 12pt; line-height: 1.4; color: #111; }
+    body { font-family: "Times New Roman", Georgia, serif; font-size: 12pt; line-height: 1.4; color: #111;
+           -webkit-print-color-adjust: exact; print-color-adjust: exact; }
+    .titlepage { text-align: center; page-break-after: always; padding-top: 48pt; }
+    .tp-logo { max-width: 62%; height: auto; margin-bottom: 56pt; }
+    .tp-heading { font-size: 16pt; font-weight: bold; margin: 0; }
+    .tp-phase { font-size: 14pt; margin: 4pt 0 56pt 0; }
+    .tp-patient { font-size: 14pt; font-weight: bold; margin: 0; }
+    .blankpage { page-break-after: always; }
     h1 { font-size: 15pt; text-align: center; margin: 0 0 2pt 0; }
     .subtitle { text-align: center; font-weight: bold; margin: 0 0 14pt 0; }
     h2 { font-size: 12pt; margin: 14pt 0 2pt 0; }
