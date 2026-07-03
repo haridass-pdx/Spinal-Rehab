@@ -16,6 +16,9 @@ struct TestDateView: View {
     let fWidth = 150.0
     @State var fullName: String = ""
     @State var alterTest: Bool = false
+    @State private var physicianList: [PhysicianRec] = []
+    @State private var physicianNames: [String]  = []
+    @State private var selectedPhysician: String = ""
     
     init(theRec: Binding<TestDateData>) {
         _theRec = theRec
@@ -31,6 +34,7 @@ struct TestDateView: View {
                 .task {
                     await buildTestList()
                     fullName = await patientClass.fullName(forId: theRec.pt_id)
+                    await buildPhysicianList()
                     
                 }
                 .onChange(of: alterTest) {oldValue, newValue in
@@ -50,8 +54,15 @@ struct TestDateView: View {
                         TextField("Enter date", value: $theRec.testdate, format: .dateTime.day().month().year())
                             .textFieldStyle(.roundedBorder)
                             .padding(.leading, 100)
+                            .padding(.bottom, 20)
                         
-                        
+                        DropdownView(label: "Physician", options: physicianNames, selectedOption: $selectedPhysician)
+                            .padding(10)
+                            .onChange(of: selectedPhysician) {
+                                if let physician = physicianList.first(where: { $0.fullname == selectedPhysician }) {
+                                    theRec.physician_id = physician.id
+                                }
+                            }
                         HStack{
                             VStack{
                                 Toggle("Cervical", isOn: $theRec.cervical)
@@ -138,7 +149,17 @@ struct TestDateView: View {
         let ptc = Patient_testClass()
         ptTestList = await ptc.buildPtTestList(pttestid: theRec.id)
     }
-    
+   
+    func buildPhysicianList() async {
+        let phc = physicianClass()
+        physicianList = await phc.buildPhysicianList()
+        physicianNames = physicianList.map(\.fullname)
+        if let physician = physicianList.first(where: { $0.id == theRec.physician_id }) {
+            selectedPhysician = physician.fullname
+        }
+
+    }
+
     func addtests() async {
         let theList = await test_tableClass.getTestNameList()
         //var ptTest = PatienttestData()

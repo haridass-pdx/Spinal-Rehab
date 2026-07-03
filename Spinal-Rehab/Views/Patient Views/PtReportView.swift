@@ -40,7 +40,8 @@ struct PtReportView: View {
         .task(id: theRec.id) {
             isLoading = true
             let values = await ReportContext.build(testDate: theRec)
-            html = ReportRenderer.fullHTML(values: values)
+            let template = await ReportDataClass.loadBodyTemplate()
+            html = ReportRenderer.fullHTML(template: template, values: values)
             isLoading = false
         }
     }

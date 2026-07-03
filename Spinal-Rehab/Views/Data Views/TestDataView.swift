@@ -14,7 +14,9 @@ struct TestDataView: View {
     @State private var selectedTest: Int?
     @State private var showTestEdit: Bool = false
     @State private var physicianList: [PhysicianRec] = []
-    @State private var selectedDr: Int?
+    @State private var thePhysician = PhysicianRec()
+    @State private var selectedPhysican: Int?
+    @State private var showPhysicianEdit: Bool = false
     var body: some View {
         VStack( spacing: 10){
             Text("Test List")
@@ -40,12 +42,7 @@ struct TestDataView: View {
                 
             }
             Spacer()
-            Text("Physician List")
-                .font(.title2)
-              
-            Table(physicianList, selection: $selectedDr){
-                TableColumn("Dr Name", value: \.fullname)
-            }
+            PhysicianView()
             Spacer()
         }
         .frame(width: 300.0, height: 600.0)

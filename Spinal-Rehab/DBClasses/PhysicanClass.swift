@@ -86,7 +86,7 @@ class physicianClass: pgClientClass {
 
     func buildPhysicianList() async -> [PhysicianRec] {
         var result: [PhysicianRec] = []
-        let text = "SELECT * FROM public.physicians ORDER BY lastname ASC ;"
+        let text = "SELECT * FROM public.physicians ORDER BY id ASC ;"
 
         await executeQuery(text: text)
         var thePhysician = PhysicianRec()

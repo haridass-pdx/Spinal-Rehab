@@ -51,6 +51,7 @@ extension SpinalReportSlice {
             "goal_list": "cervical flexor endurance, lumbar extensor endurance",
             "goal_months": "2",
             "reeval_days": "30 and 60",
+            "physician_name": "John Doe, DC",
         ]
         v["normative_tables"] = sampleNormativeTables()
         return v

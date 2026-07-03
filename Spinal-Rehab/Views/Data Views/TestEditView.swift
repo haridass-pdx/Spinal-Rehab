@@ -85,7 +85,7 @@ struct TestEditView: View {
         
         let ndc = normal_dataClass()
         dataList =  await ndc.buildNormalList(id: theTest.id)
-        print(dataList)
+      //  print(dataList)
         
     }
 }

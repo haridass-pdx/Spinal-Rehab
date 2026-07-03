@@ -23,8 +23,15 @@ struct AppTabView: View {
                     .tabItem {
                         Label("Data", systemImage: "chart.bar.fill")
                     }
-            
-            
+            NavigationStack {
+                MacReportTemplateEditor()
+                    .navigationTitle("Report Template")
+            }
+                    .tabItem {
+                        Label("Template", systemImage: "doc.text")
+                    }
+
+
         }
     }
 }

@@ -16,8 +16,9 @@ import AppKit
 enum ReportRenderer {
 
     /// Resolve `{tokens}` in the body template and wrap in the print-ready document.
-    static func fullHTML(values: [String: String]) -> String {
-        let body = ParsedTemplate(rawText: bodyTemplate).render(with: values)
+    /// Pass the text loaded from reports.thetext; defaults to the built-in template.
+    static func fullHTML(template: String = bodyTemplate, values: [String: String]) -> String {
+        let body = ParsedTemplate(rawText: template).render(with: values)
         return PDFReportEngine.wrap(body: body, css: reportCSS)
     }
 
@@ -104,7 +105,7 @@ enum ReportRenderer {
         """
     }()
 
-    // MARK: - Body template (this is what would live in reports.thetext)
+    // MARK: - Body template (default/fallback; the live copy is reports.thetext)
 
     static let bodyTemplate = """
     <div class="titlepage">
@@ -131,7 +132,7 @@ enum ReportRenderer {
     <h2>Therapy Plan &amp; Goal</h2>
     <p>{patient_name}'s performance was <strong>below satisfactory on {below_satisfactory_list}</strong>. We recommend supervised graded exercise rehabilitation for {patient_name}. The exercises will focus upon improving the endurance of the cervical and lumbar spine. Researchers recommend that exercise goals should aim above the mean to the "good to excellent" range because of the dose response of exercise therapy. Our goal is to improve the {goal_list} to the good range in the next {goal_months} months with re-evaluations at {reeval_days} days.</p>
 
-    <p class="signoff">Sincerely,</p>
+    <p class="signoff">Sincerely,<br><br>{physician_name}</p>
 
     {normative_tables}
     """

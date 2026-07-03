@@ -4,112 +4,110 @@
 //
 //  Created by Hari Dass Khalsa on 6/28/26.
 //
-
+//  Edits the performance-report body template stored in reports.thetext
+//  (row ReportDataClass.performanceReportID). The right pane renders the
+//  edited text through ReportRenderer with the same sample values as
+//  SpinalReportSlice, so token typos show up before the template is saved.
+//
 
 import SwiftUI
 
-// 1. Core Template Engine
-extension String {
-    func resolveTemplate(with values: [String: String]) -> String {
-        var resolved = self
-        for (key, value) in values {
-            resolved = resolved.replacingOccurrences(of: "{\(key)}", with: value)
-        }
-        return resolved
-    }
-}
-
 struct MacReportTemplateEditor: View {
-    // Simulated database record from Postgres
-    @State private var dbTemplateText: String = """
-    REPORT SUMMARY
-    ---------------------------
-    Client Name: {client_name}
-    Project Status: {status}
-    
-    Notes:
-    {notes}
-    """
-    
-    // Live app variables to inject into the template
-    @State private var clientName: String = "Acme Corp"
-    @State private var currentStatus: String = "In Progress"
-    @State private var staffNotes: String = "Initial milestones met on schedule."
-    
+    @State private var templateText: String = ""
+    @State private var savedText: String = ""
+    @State private var previewHTML: String = ""
+    @State private var isLoading = true
+    @State private var statusMessage: String = ""
+
     @FocusState private var isEditorFocused: Bool
 
-    // 2. Computed property for real-time resolution
-    var previewOutput: String {
-        let dictionary = [
-            "client_name": clientName,
-            "status": currentStatus,
-            "notes": staffNotes
-        ]
-        return dbTemplateText.resolveTemplate(with: dictionary)
+    /// Tokens typed in the template that the report code doesn't supply.
+    /// Saving is blocked while any exist, so a typo like {physican_name}
+    /// can't end up printed in a patient report as "{Missing: ...}".
+    private var unknownTokens: [String] {
+        let known = SpinalReportSlice.sampleValues
+        let tokens = ParsedTemplate(rawText: templateText).segments.compactMap { segment in
+            if case .token(let key) = segment { return key }
+            return nil
+        }
+        return Array(Set(tokens.filter { known[$0] == nil })).sorted()
     }
 
     var body: some View {
-        HSplitView { // Native macOS resizable split view
-            // Left Side: Template Editor
-            VStack(alignment: .leading, spacing: 10) {
-                Text("Database Template Editor")
-                    .font(.headline)
-                    .foregroundColor(.secondary)
-                
-                TextEditor(text: $dbTemplateText)
-                    .font(.system(.body, design: .monospaced))
-                    .focused($isEditorFocused)
-                    .padding(8)
-                    .background(Color(NSColor.controlBackgroundColor))
-                    .cornerRadius(6)
-                    .overlay(
-                        RoundedRectangle(cornerRadius: 6)
-                            .stroke(isEditorFocused ? Color.accentColor : Color.gray.opacity(0.2), lineWidth: 1)
-                    )
+        VStack(spacing: 0) {
+            HStack {
+                Text("Report Template").font(.title2)
+                Spacer()
+                Button("Restore Default") { templateText = ReportRenderer.bodyTemplate }
+                Button("Revert") { templateText = savedText }
+                    .disabled(templateText == savedText)
+                Button("Save") { Task { await save() } }
+                    .disabled(templateText == savedText || !unknownTokens.isEmpty)
+                    .keyboardShortcut("s")
             }
-            .padding()
-            .frame(minWidth: 300, maxWidth: .infinity)
+            .padding(10)
 
-            // Right Side: Context Inputs & Live Preview
-            VStack(alignment: .leading, spacing: 16) {
-                Text("Live Preview & Variables")
-                    .font(.headline)
+            if !unknownTokens.isEmpty {
+                Text("Unknown token\(unknownTokens.count == 1 ? "" : "s"): "
+                     + unknownTokens.map { "{\($0)}" }.joined(separator: ", ")
+                     + " — fix before saving")
+                    .foregroundColor(.red)
+                    .frame(maxWidth: .infinity, alignment: .leading)
+                    .padding(.horizontal, 10)
+                    .padding(.bottom, 6)
+            } else if !statusMessage.isEmpty {
+                Text(statusMessage)
                     .foregroundColor(.secondary)
-                
-                // Variable Inputs
-                Grid(alignment: .leading, horizontalSpacing: 10, verticalSpacing: 10) {
-                    GridRow {
-                        Text("Client:")
-                        TextField("Enter client name", text: $clientName)
-                    }
-                    GridRow {
-                        Text("Status:")
-                        TextField("Enter status", text: $currentStatus)
-                    }
-                    GridRow {
-                        Text("Notes:")
-                        TextField("Enter notes", text: $staffNotes)
-                    }
-                }
-                .textFieldStyle(.roundedBorder)
-                
-                Divider()
-                
-                // Rendered Output Block
-                ScrollView {
-                    Text(previewOutput)
-                        .frame(maxWidth: .infinity, alignment: .leading)
-                        .padding()
-                        .background(Color(NSColor.textBackgroundColor))
-                        .cornerRadius(6)
+                    .frame(maxWidth: .infinity, alignment: .leading)
+                    .padding(.horizontal, 10)
+                    .padding(.bottom, 6)
+            }
+            Divider()
+
+            if isLoading {
+                ProgressView("Loading template…")
+                    .frame(maxWidth: .infinity, maxHeight: .infinity)
+            } else {
+                HSplitView {
+                    TextEditor(text: $templateText)
+                        .font(.system(.body, design: .monospaced))
+                        .focused($isEditorFocused)
+                        .padding(4)
+                        .frame(minWidth: 300, maxWidth: .infinity)
+
+                    HTMLPreviewView(htmlContent: previewHTML)
+                        .frame(minWidth: 350, maxWidth: .infinity)
                 }
             }
-            .padding()
-            .frame(minWidth: 350, maxWidth: .infinity)
         }
-        .frame(minWidth: 700, minHeight: 450)
-        .onAppear {
-            isEditorFocused = true // Auto-focus editor on launch
+        .frame(minWidth: 800, minHeight: 600)
+        .task {
+            templateText = await ReportDataClass.loadBodyTemplate()
+            savedText = templateText
+            isLoading = false
+            isEditorFocused = true
+        }
+        .task(id: templateText) {
+            // Debounce so the web view isn't reloaded on every keystroke.
+            try? await Task.sleep(for: .milliseconds(400))
+            if Task.isCancelled { return }
+            previewHTML = ReportRenderer.fullHTML(template: templateText,
+                                                  values: SpinalReportSlice.sampleValues)
         }
     }
+
+    private func save() async {
+        let ok = await ReportDataClass.saveReportData(
+            reportID: ReportDataClass.performanceReportID, text: templateText)
+        if ok {
+            savedText = templateText
+            statusMessage = "Saved"
+        } else {
+            statusMessage = "Save failed — check the database connection"
+        }
+    }
+}
+
+#Preview {
+    MacReportTemplateEditor()
 }

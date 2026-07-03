@@ -20,11 +20,12 @@ struct TestDateData: Identifiable, Codable, Equatable, Hashable{
     var bp_diastolic: Int = 0
     var heart_rate: Int = 0
     var pt_id: Int = 0
+    var physician_id: Int = 0
     var dataDict: DictListType = [:]
 
     enum CodingKeys: String, CodingKey {
         case id, testdate, cervical, lumbar, cardio, is_baseline,
-             fri, fri_pain, bp_systolic, bp_diastolic, heart_rate, pt_id
+             fri, fri_pain, bp_systolic, bp_diastolic, heart_rate, pt_id, physician_id
     }
 
     init(){
@@ -56,7 +57,8 @@ struct TestDateData: Identifiable, Codable, Equatable, Hashable{
         lhs.bp_systolic == rhs.bp_systolic &&
         lhs.bp_diastolic == rhs.bp_diastolic &&
         lhs.heart_rate == rhs.heart_rate &&
-        lhs.pt_id == rhs.pt_id
+        lhs.pt_id == rhs.pt_id  &&
+        lhs.physician_id == rhs.physician_id
         
     }
     

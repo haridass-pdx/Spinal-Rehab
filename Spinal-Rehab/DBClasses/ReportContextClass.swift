@@ -58,6 +58,10 @@ enum ReportContext {
         v["goal_months"] = "2"
         v["reeval_days"] = "30 and 60"
 
+        // Signing physician for the "Sincerely," block
+        let physician = await physicianClass().getPhysician(id: testDate.physician_id)
+        v["physician_name"] = physician?.fullname ?? ""
+
         // Patient test results for this date
         let rows = await Patient_testClass().buildPtTestList(pttestid: testDate.id)
 
