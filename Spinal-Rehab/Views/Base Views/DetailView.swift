@@ -10,10 +10,12 @@ import SwiftUI
 struct DetailView: View {
     @Binding var patientRecord: PatientData
     @Binding var disableTable: Bool
+    var addingPatient: Bool = false
     var body: some View {
-        if(patientRecord.id != 0) {
+        if(patientRecord.id != 0 || addingPatient) {
          //   NavigationStack {
                 PatientEditView(patient: $patientRecord, tablesDisabled: $disableTable)
+                    .id(patientRecord.id) // fresh @State (originalPatient) per record
         //    }
         }
         else {

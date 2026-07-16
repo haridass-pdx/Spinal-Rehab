@@ -16,6 +16,7 @@ struct ContentView: View {
     @State private var searchText: String = ""
     @State private var columnVisibility = NavigationSplitViewVisibility.all // or .doubleColumn
     @State private var editPatient: Bool = false
+    @State private var addingPatient: Bool = false
     
     var filteredNames: [PatientData] {
         if searchText.isEmpty {
@@ -34,6 +35,11 @@ struct ContentView: View {
                 HStack{
                     Text("Last Name")
                     TextField("Search", text: $searchText)
+                    Button("New Patient") {
+                        selectedPt = nil
+                        patientRecord = PatientData()
+                        addingPatient = true
+                    }
                 }
                 Table(filteredNames, selection: $selectedPt) {
                     TableColumn("Name", value: \.fullname)
@@ -42,6 +48,16 @@ struct ContentView: View {
                 .onChange(of: selectedPt) {oldValue, newValue in
                     if let specificIndex = patientList.firstIndex(where: { $0.id == newValue }) {
                         patientRecord = patientList[specificIndex]
+                    }
+                }
+                .onChange(of: patientRecord) {oldValue, newValue in
+                    if let specificIndex = patientList.firstIndex(where: { $0.id == newValue.id }) {
+                        patientList[specificIndex] = newValue
+                    } else if newValue.id != 0 {
+                        // Newly saved patient: saveRec assigned its id, add it to the list
+                        patientList.append(newValue)
+                        selectedPt = newValue.id
+                        addingPatient = false
                     }
                 }
              
@@ -55,7 +71,7 @@ struct ContentView: View {
             
             
             
-            DetailView(patientRecord: $patientRecord, disableTable: $disableTable)
+            DetailView(patientRecord: $patientRecord, disableTable: $disableTable, addingPatient: addingPatient)
                 .padding(.bottom, 30.0)
             
         }
