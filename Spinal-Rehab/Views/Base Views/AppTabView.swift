@@ -24,6 +24,13 @@ struct AppTabView: View {
                         Label("Data", systemImage: "chart.bar.fill")
                     }
             NavigationStack {
+                ExerciseListView()
+                    .navigationTitle("Exercises")
+            }
+                    .tabItem {
+                        Label("Exercises", systemImage: "figure.strengthtraining.functional")
+                    }
+            NavigationStack {
                 MacReportTemplateEditor()
                     .navigationTitle("Report Template")
             }

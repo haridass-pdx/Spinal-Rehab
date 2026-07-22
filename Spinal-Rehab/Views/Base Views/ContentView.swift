@@ -17,6 +17,7 @@ struct ContentView: View {
     @State private var columnVisibility = NavigationSplitViewVisibility.all // or .doubleColumn
     @State private var editPatient: Bool = false
     @State private var addingPatient: Bool = false
+    @State private var confirmDelete: Bool = false
     
     var filteredNames: [PatientData] {
         if searchText.isEmpty {
@@ -39,6 +40,18 @@ struct ContentView: View {
                         selectedPt = nil
                         patientRecord = PatientData()
                         addingPatient = true
+                    }
+                    Button("Delete Patient", role: .destructive) {
+                        confirmDelete = true
+                    }
+                    .disabled(patientRecord.id == 0)
+                    .confirmationDialog("Delete \(patientRecord.fullname) and all their test data?",
+                                        isPresented: $confirmDelete) {
+                        Button("Delete", role: .destructive) {
+                            Task { await deleteSelectedPatient() }
+                        }
+                    } message: {
+                        Text("This cannot be undone.")
                     }
                 }
                 Table(filteredNames, selection: $selectedPt) {
@@ -83,6 +96,16 @@ struct ContentView: View {
       
     
     
+    func deleteSelectedPatient() async {
+        let deleteId = patientRecord.id
+        guard deleteId != 0 else { return }
+        await patientClass.deletePatient(id: deleteId)
+        patientList.removeAll { $0.id == deleteId }
+        selectedPt = nil
+        patientRecord = PatientData()
+        addingPatient = false
+    }
+
     func loadPatientList() async {
         let myConnection = patientClass()
         let list = await myConnection.buildPatientist()

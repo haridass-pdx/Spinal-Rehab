@@ -164,6 +164,16 @@ class patientClass: pgClientClass {
         return result
     }
 
+    /// Delete a patient and all of their test data (patient_test and testdate
+    /// rows first, so no orphaned records are left behind).
+    class func deletePatient(id: Int) async {
+        guard id != 0 else { return }
+        let ptc = patientClass()
+        await ptc.executeQueryND(text: "DELETE FROM patient_test WHERE patient_id = \(id);")
+        await ptc.executeQueryND(text: "DELETE FROM testdate WHERE pt_id = \(id);")
+        await ptc.executeQueryND(text: "DELETE FROM patients WHERE id = \(id);")
+    }
+
     func buildPatientist() async -> [PatientData]{
         var text: String = ""
         var result: [PatientData] = []

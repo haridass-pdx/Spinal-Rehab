@@ -100,7 +100,9 @@ class ColumnMetadataCache {
     private init() {}
     
     func loadAll() async {
-        let tables = ["patients", "testdate", "test_table", "normal_data", "patient_test", "physicians", "reports"]
+        let tables = ["patients", "testdate", "test_table", "normal_data", "patient_test", "physicians", "reports",
+                      "exercises", "exercise_images", "patient_rehab_program", "patient_rehab_list",
+                      "rehab_program", "rehab_program_list"]
         for table in tables {
             await loadTable(name: table)
         }
@@ -546,7 +548,8 @@ public class pgClientClass: ObservableObject {
         case "bool":
             return val.isEmpty ? "'false'" : "'\(val)'"
         case "text":
-            return "'\(val)'"
+            // Double single quotes so values like "runner's stretch" or O'Brien save correctly
+            return "'\(val.replacingOccurrences(of: "'", with: "''"))'"
         case "num":
             return val.isEmpty ? "0" : "\(val)"
         case "time":

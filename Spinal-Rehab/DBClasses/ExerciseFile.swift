@@ -88,7 +88,7 @@ class exerciseClass: pgClientClass {
 
     func buildExerciseList() async -> [ExerciseData] {
         var result: [ExerciseData] = []
-        let text = "SELECT * FROM public.exercises ORDER BY name ASC ;"
+        let text = "SELECT * FROM public.exercises ORDER BY id ASC ;"
 
         await executeQuery(text: text)
         var theExercise = ExerciseData()

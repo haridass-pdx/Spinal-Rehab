@@ -7,6 +7,8 @@
 //
 
 import SwiftUI
+import AppKit
+import UniformTypeIdentifiers
 
 struct ExerciseListView: View {
     @State private var exerciseList: [ExerciseData] = []
@@ -27,6 +29,7 @@ struct ExerciseListView: View {
             .padding(.horizontal)
 
             Table(exerciseList, selection: $selected) {
+                TableColumn("ID", value: \.id.description)
                 TableColumn("Name", value: \.name)
                 TableColumn("Description", value: \.description)
                 TableColumn("Reps") { Text("\($0.def_reps)") }
@@ -71,6 +74,7 @@ struct ExerciseEditView: View {
     @State private var removedDbIds: [Int] = []
     @State private var showImporter = false
     @State private var isBusy = false
+    @State private var dropTargeted = false
 
     private let thumb = 120.0
 
@@ -94,38 +98,51 @@ struct ExerciseEditView: View {
             HStack {
                 Text("Images").font(.headline)
                 Spacer()
+                Button("Paste") { pasteFromClipboard() }
+                    .disabled(!clipboardHasImage)
                 Button("Add Images…") { showImporter = true }
             }
 
-            if images.isEmpty {
-                Text("No images")
-                    .foregroundColor(.secondary)
-                    .frame(maxWidth: .infinity, minHeight: thumb)
-            } else {
-                ScrollView {
-                    LazyVGrid(columns: [GridItem(.adaptive(minimum: thumb), spacing: 10)], spacing: 10) {
-                        ForEach(images) { img in
-                            Image(nsImage: img.nsImage)
-                                .resizable()
-                                .scaledToFill()
-                                .frame(width: thumb, height: thumb)
-                                .clipped()
-                                .cornerRadius(6)
-                                .overlay(alignment: .topTrailing) {
-                                    Button {
-                                        remove(img)
-                                    } label: {
-                                        Image(systemName: "xmark.circle.fill")
-                                            .foregroundStyle(.white, .black.opacity(0.6))
+            Group {
+                if images.isEmpty {
+                    Text("Drag images here, paste, or use Add Images…")
+                        .foregroundColor(.secondary)
+                        .frame(maxWidth: .infinity, minHeight: thumb)
+                } else {
+                    ScrollView {
+                        LazyVGrid(columns: [GridItem(.adaptive(minimum: thumb), spacing: 10)], spacing: 10) {
+                            ForEach(images) { img in
+                                Image(nsImage: img.nsImage)
+                                    .resizable()
+                                    .scaledToFit()
+                                    .frame(width: thumb, height: thumb)
+                                    .background(Color.gray.opacity(0.1))
+                                    .cornerRadius(6)
+                                    .overlay(alignment: .topTrailing) {
+                                        Button {
+                                            remove(img)
+                                        } label: {
+                                            Image(systemName: "xmark.circle.fill")
+                                                .foregroundStyle(.white, .black.opacity(0.6))
+                                        }
+                                        .buttonStyle(.plain)
+                                        .padding(4)
                                     }
-                                    .buttonStyle(.plain)
-                                    .padding(4)
-                                }
+                            }
                         }
+                        .padding(.vertical, 4)
                     }
-                    .padding(.vertical, 4)
+                    .frame(maxHeight: 300)
                 }
-                .frame(maxHeight: 300)
+            }
+            .frame(maxWidth: .infinity)
+            .overlay(
+                RoundedRectangle(cornerRadius: 8)
+                    .strokeBorder(dropTargeted ? Color.accentColor : Color.gray.opacity(0.3),
+                                  style: StrokeStyle(lineWidth: dropTargeted ? 2 : 1, dash: [5]))
+            )
+            .onDrop(of: [.fileURL, .image], isTargeted: $dropTargeted) { providers in
+                loadDropped(providers)
             }
 
             HStack {
@@ -167,9 +184,65 @@ struct ExerciseEditView: View {
         for url in urls {
             let scoped = url.startAccessingSecurityScopedResource()
             defer { if scoped { url.stopAccessingSecurityScopedResource() } }
-            guard let jpeg = ImageEncoding.normalizedJPEG(fromFileAt: url),
-                  let ns = NSImage(data: jpeg) else { continue }
-            images.append(EditableImage(dbId: nil, data: jpeg, nsImage: ns))
+            appendJPEG(fromFileAt: url)
+        }
+    }
+
+    /// Normalize raw image bytes and append as a pending image.
+    private func appendNormalized(_ raw: Data) {
+        guard let jpeg = ImageEncoding.normalizedJPEG(from: raw),
+              let ns = NSImage(data: jpeg) else { return }
+        images.append(EditableImage(dbId: nil, data: jpeg, nsImage: ns))
+    }
+
+    private func appendJPEG(fromFileAt url: URL) {
+        guard let jpeg = ImageEncoding.normalizedJPEG(fromFileAt: url),
+              let ns = NSImage(data: jpeg) else { return }
+        images.append(EditableImage(dbId: nil, data: jpeg, nsImage: ns))
+    }
+
+    // MARK: - Drag & drop
+
+    private func loadDropped(_ providers: [NSItemProvider]) -> Bool {
+        var handled = false
+        for provider in providers {
+            if provider.canLoadObject(ofClass: URL.self) {
+                handled = true
+                _ = provider.loadObject(ofClass: URL.self) { url, _ in
+                    guard let url else { return }
+                    DispatchQueue.main.async { appendJPEG(fromFileAt: url) }
+                }
+            } else if provider.hasItemConformingToTypeIdentifier(UTType.image.identifier) {
+                handled = true
+                provider.loadDataRepresentation(forTypeIdentifier: UTType.image.identifier) { data, _ in
+                    guard let data else { return }
+                    DispatchQueue.main.async { appendNormalized(data) }
+                }
+            }
+        }
+        return handled
+    }
+
+    // MARK: - Paste
+
+    private var clipboardHasImage: Bool {
+        let pb = NSPasteboard.general
+        return pb.canReadObject(forClasses: [NSImage.self], options: nil)
+            || pb.canReadObject(forClasses: [NSURL.self],
+                                options: [.urlReadingContentsConformToTypes: [UTType.image.identifier]])
+    }
+
+    private func pasteFromClipboard() {
+        let pb = NSPasteboard.general
+        // Prefer file references (keeps original bytes), else fall back to raw image data.
+        if let urls = pb.readObjects(forClasses: [NSURL.self],
+                                     options: [.urlReadingContentsConformToTypes: [UTType.image.identifier]]) as? [URL],
+           !urls.isEmpty {
+            for url in urls { appendJPEG(fromFileAt: url) }
+        } else if let pasted = pb.readObjects(forClasses: [NSImage.self]) as? [NSImage] {
+            for img in pasted {
+                if let tiff = img.tiffRepresentation { appendNormalized(tiff) }
+            }
         }
     }
 
