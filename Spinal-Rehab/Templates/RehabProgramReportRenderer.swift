@@ -111,6 +111,7 @@ enum RehabProgramReportRenderer {
     .rehab > *:not(:first-child) { border-top: 1px solid #999; }
     .gallery { display: flex; flex-wrap: wrap; gap: 8px; padding: 0 8px 8px 8px; }
     .gallery:empty { padding: 0; }
+    .gallery:not(:empty) { border-top: 1px solid #999; padding-top: 8px; }
     .gallery img { height: 1in; width: auto; object-fit: contain; border: 1px solid #ccc; }
     .item { page-break-inside: avoid; }
     """
