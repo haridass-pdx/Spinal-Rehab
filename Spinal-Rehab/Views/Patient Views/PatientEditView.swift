@@ -53,11 +53,20 @@ struct PatientEditView: View {
                         TextField("Phone", text: $patient.phone)
                         TextField("Email", text: $patient.email)
                     }
-                    TextField("Gender", text: $patient.gender)
+                    Picker("Gender", selection: $patient.gender) {
+                        Text("Unspecified").tag("")
+                        Text("Male").tag("Male")
+                        Text("Female").tag("Female")
+                        Text("Other").tag("Other")
+                    }
+                    .frame(width: 200, alignment: .leading)
                     HStack{
                         DateTextField("Birthday", selection: $patient.dob)
                             .frame(width: 200)
                         TextField("Age", value: $patient.age, format: .number)
+                    }.onChange(of: patient.dob) {oldValue, newValue in
+                        calcAge()
+                        
                     }
                     HStack{
                         Spacer()
@@ -98,6 +107,15 @@ struct PatientEditView: View {
            patient = localPatient
        }
 
+    }
+    
+    func calcAge(){
+        let dob = patient.dob
+        let year = Calendar.current.component(.year, from: dob ?? Date())
+        let todayYear = Calendar.current.component(.year, from: Date())
+
+        patient.age = todayYear - year
+        
     }
 }
 
