@@ -31,6 +31,13 @@ struct AppTabView: View {
                         Label("Exercises", systemImage: "figure.strengthtraining.functional")
                     }
             NavigationStack {
+                RehabListView()
+                    .navigationTitle("Rehab Programs")
+            }
+                    .tabItem {
+                        Label("Rehab Programs", systemImage: "figure.strengthtraining.functional")
+                    }
+            NavigationStack {
                 MacReportTemplateEditor()
                     .navigationTitle("Report Template")
             }

@@ -96,6 +96,8 @@ struct PatientEditView: View {
             .padding(10)
             Divider()
             TestDateListView(patient: $patient, tablesDisabled: $tablesDisabled)
+            Divider()
+            PatientRehabListView(patient: $patient)
         }
         Spacer()
     }

@@ -104,10 +104,11 @@ struct RehabProgramListData: Identifiable, Codable, Equatable, Hashable {
     var id: Int = 0
     var rehab_id: Int = 0
     var exercise_id: Int = 0
+    var exercise_order: Int = 0
     var dataDict: DictListType = [:]
 
     enum CodingKeys: String, CodingKey {
-        case id, rehab_id, exercise_id
+        case id, rehab_id, exercise_id, exercise_order
     }
 
     init() {
@@ -128,7 +129,8 @@ struct RehabProgramListData: Identifiable, Codable, Equatable, Hashable {
     static func == (lhs: RehabProgramListData, rhs: RehabProgramListData) -> Bool {
         lhs.id == rhs.id &&
         lhs.rehab_id == rhs.rehab_id &&
-        lhs.exercise_id == rhs.exercise_id
+        lhs.exercise_id == rhs.exercise_id &&
+        lhs.exercise_order == rhs.exercise_order
     }
 
     func hash(into hasher: inout Hasher) {
@@ -177,7 +179,7 @@ class rehab_program_listClass: pgClientClass {
 
     func buildExerciseList(rehabId: Int) async -> [RehabProgramListData] {
         var result: [RehabProgramListData] = []
-        let text = "SELECT * FROM public.rehab_program_list WHERE rehab_id = \(rehabId) ORDER BY id ASC ;"
+        let text = "SELECT * FROM public.rehab_program_list WHERE rehab_id = \(rehabId) ORDER BY exercise_order ASC ;"
 
         await executeQuery(text: text)
         var theItem = RehabProgramListData()
