@@ -17,49 +17,21 @@ struct PatientRehabListView: View {
     @State private var selected: Int?
     @State private var showPrint = false
 
+    @State private var items: [PatientRehabListData] = []
+    @State private var exerciseLookup: [Int: ExerciseData] = [:]
+    @State private var editItem: PatientRehabListData?
+
     var body: some View {
         VStack {
             Text("Rehab Programs")
                 .font(.headline)
 
-            Table(assignedList, selection: $selected) {
-                TableColumn("Date") { (rec: PatientRehabProgramData) in
-                    if let d = rec.prdate {
-                        Text(d, format: .dateTime.month(.twoDigits).day(.twoDigits).year(.defaultDigits))
-                    } else {
-                        Text("No Date")
-                    }
-                }
-                TableColumn("Name", value: \.name)
-            }
-            .frame(width: 300, height: 150)
+            programTable
+            actionButtons
 
-            HStack(spacing: 12) {
-                Picker("Assign program", selection: $programToAssign) {
-                    Text("Assign program…").tag(Int?.none)
-                    ForEach(catalog) { program in
-                        Text(program.name).tag(Int?(program.id))
-                    }
-                }
-                .labelsHidden()
-                .frame(width: 200)
-                .onChange(of: programToAssign) { _, newValue in
-                    if let rehabId = newValue {
-                        Task { await assign(rehabId) }
-                    }
-                }
-
-                Button("Print…") {
-                    showPrint = true
-                }
-                .disabled(selected == nil)
-
-                Button {
-                    Task { await removeSelected() }
-                } label: {
-                    Image(systemName: "trash")
-                }
-                .disabled(selected == nil)
+            if selected != nil {
+                Divider()
+                exercisesSection
             }
         }
         .task {
@@ -68,11 +40,116 @@ struct PatientRehabListView: View {
         .onChange(of: patient.id) { _, _ in
             Task { await load() }
         }
+        .onChange(of: selected) { _, newValue in
+            Task { await loadItems(newValue) }
+        }
         .sheet(isPresented: $showPrint) {
-            if let id = selected, let rec = assignedList.first(where: { $0.id == id }) {
-                PatientRehabProgramPrintView(program: rec, patientName: patient.fullname)
+            printSheet
+        }
+        .sheet(item: $editItem, onDismiss: {
+            Task { await loadItems(selected) }
+        }) { item in
+            editSheet(for: item)
+        }
+    }
+
+    private var programTable: some View {
+        Table(assignedList, selection: $selected) {
+            TableColumn("Date") { (rec: PatientRehabProgramData) in
+                if let d = rec.prdate {
+                    Text(d, format: .dateTime.month(.twoDigits).day(.twoDigits).year(.defaultDigits))
+                } else {
+                    Text("No Date")
+                }
+            }
+            TableColumn("Name", value: \.name)
+        }
+        .frame(width: 300, height: 150)
+    }
+
+    private var actionButtons: some View {
+        HStack(spacing: 12) {
+            Picker("Assign program", selection: $programToAssign) {
+                Text("Assign program…").tag(Int?.none)
+                ForEach(catalog) { program in
+                    Text(program.name).tag(Int?(program.id))
+                }
+            }
+            .labelsHidden()
+            .frame(width: 200)
+            .onChange(of: programToAssign) { _, newValue in
+                if let rehabId = newValue {
+                    Task { await assign(rehabId) }
+                }
+            }
+
+            Button("Print…") {
+                showPrint = true
+            }
+            .disabled(selected == nil)
+
+            Button {
+                Task { await removeSelected() }
+            } label: {
+                Image(systemName: "trash")
+            }
+            .disabled(selected == nil)
+        }
+    }
+
+    private var exercisesSection: some View {
+        VStack {
+            HStack {
+                Text("Exercises").font(.subheadline).bold()
+                Spacer()
+                Button("Sync All to Defaults") {
+                    Task { await syncAllToDefaults() }
+                }
+                .disabled(items.isEmpty)
+            }
+            .frame(width: 300)
+
+            if items.isEmpty {
+                Text("No exercises in this program")
+                    .foregroundColor(.secondary)
+                    .frame(width: 300, height: 60)
+            } else {
+                exercisesList
             }
         }
+    }
+
+    private var exercisesList: some View {
+        List(items) { item in
+            exerciseRow(for: item)
+        }
+        .frame(width: 300, height: 150)
+    }
+
+    private func exerciseRow(for item: PatientRehabListData) -> some View {
+        HStack {
+            Text(exerciseName(for: item))
+            Spacer()
+            Text(repsSetsLabel(for: item))
+                .foregroundColor(.secondary)
+        }
+        .contentShape(Rectangle())
+        .onTapGesture { editItem = item }
+    }
+
+    @ViewBuilder
+    private var printSheet: some View {
+        if let id = selected, let rec = assignedList.first(where: { $0.id == id }) {
+            PatientRehabProgramPrintView(program: rec, patientName: patient.fullname)
+        }
+    }
+
+    private func editSheet(for item: PatientRehabListData) -> some View {
+        let exercise = exerciseLookup[item.exercise_id]
+        return PatientRehabItemEditView(item: item,
+                                         exerciseName: exercise?.name ?? "Exercise \(item.exercise_id)",
+                                         defaultReps: exercise?.def_reps ?? 0,
+                                         defaultSets: exercise?.def_sets ?? 0)
     }
 
     func load() async {
@@ -95,6 +172,91 @@ struct PatientRehabListView: View {
         await rec.deleteRec()
         selected = nil
         await load()
+    }
+
+    func exerciseName(for item: PatientRehabListData) -> String {
+        exerciseLookup[item.exercise_id]?.name ?? "Exercise \(item.exercise_id)"
+    }
+
+    func repsSetsLabel(for item: PatientRehabListData) -> String {
+        "Reps: \(item.reps)  Sets: \(item.sets)"
+    }
+
+    /// Loads the exercise rows for the selected assigned program, along with
+    /// the linked exercise (for its name and current defaults).
+    func loadItems(_ programId: Int?) async {
+        guard let programId else {
+            items = []
+            exerciseLookup = [:]
+            return
+        }
+        items = await patient_rehab_listClass().buildExerciseList(programId: programId)
+
+        let exC = exerciseClass()
+        var lookup: [Int: ExerciseData] = [:]
+        for item in items where lookup[item.exercise_id] == nil {
+            if let exercise = await exC.getExercise(id: item.exercise_id) {
+                lookup[item.exercise_id] = exercise
+            }
+        }
+        exerciseLookup = lookup
+    }
+
+    /// Re-seeds every item's reps/sets from the linked exercise's current
+    /// defaults, overwriting whatever was stored at assignment time. Mutates
+    /// `items` directly (rather than reloading from the DB afterward) so the
+    /// on-screen list updates immediately.
+    func syncAllToDefaults() async {
+        for index in items.indices {
+            guard let exercise = exerciseLookup[items[index].exercise_id] else { continue }
+            var rec = items[index]
+            rec.reps = exercise.def_reps
+            rec.sets = exercise.def_sets
+            await rec.saveRec()
+            items[index] = rec
+        }
+    }
+}
+
+/// Edits the reps/sets for a single exercise within a patient's assigned
+/// program. These start as a snapshot of the exercise's defaults (see
+/// patient_rehab_programClass.addProgram) but can drift from them, so this
+/// also offers a one-tap way to pull the current defaults back in.
+struct PatientRehabItemEditView: View {
+    @State var item: PatientRehabListData
+    let exerciseName: String
+    let defaultReps: Int
+    let defaultSets: Int
+    @Environment(\.dismiss) var dismiss
+
+    var body: some View {
+        VStack(spacing: 16) {
+            Text(exerciseName)
+                .font(.title2)
+
+            Form {
+                TextField("Reps", value: $item.reps, format: .number)
+                TextField("Sets", value: $item.sets, format: .number)
+            }
+
+            Button("Reset to Defaults (\(defaultReps) reps / \(defaultSets) sets)") {
+                item.reps = defaultReps
+                item.sets = defaultSets
+            }
+
+            HStack {
+                Button("Save") { Task { await save(); dismiss() } }
+                Button("Cancel") { dismiss() }
+                Spacer()
+            }
+        }
+        .frame(width: 320)
+        .padding()
+    }
+
+    private func save() async {
+        var rec = item
+        await rec.saveRec()
     }
 }
 
