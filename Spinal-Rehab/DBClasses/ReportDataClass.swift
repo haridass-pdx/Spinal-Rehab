@@ -13,6 +13,9 @@ class ReportDataClass: pgClientClass{
     /// reports.id row that holds the performance-report body template
     static let performanceReportID = 1
 
+    /// reports.id row that holds the follow-up-report body template
+    static let followUpReportID = 2
+
     class func getReportData(reportID: Int) async -> String? {
 
         let rdc = ReportDataClass()
@@ -48,6 +51,16 @@ class ReportDataClass: pgClientClass{
             return text
         }
         return ReportRenderer.bodyTemplate
+    }
+
+    /// Body template for the follow-up report: the reports.thetext row when
+    /// present, otherwise the built-in default in FollowUpReportRenderer.
+    class func loadFollowUpTemplate() async -> String {
+        if let text = await getReportData(reportID: followUpReportID),
+           !text.trimmingCharacters(in: .whitespacesAndNewlines).isEmpty {
+            return text
+        }
+        return FollowUpReportRenderer.bodyTemplate
     }
 
 }

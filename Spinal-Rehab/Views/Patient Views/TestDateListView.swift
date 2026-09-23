@@ -15,6 +15,7 @@ struct TestDateListView: View {
     @State  var selTDRec = TestDateData()
     @State private var showTD: Bool = false
     @State private var showReport: Bool = false
+    @State private var showFollowUpReport: Bool = false
   
     @Environment(\.dismiss) var dismiss
     @State private var count = 0
@@ -47,9 +48,15 @@ struct TestDateListView: View {
                     else{
                         Text("No Date Available")
                     }
-                    
-                    
-                    
+
+
+
+                }
+                TableColumn("Baseline"){ (tdRec: TestDateData) in
+                    if tdRec.is_baseline {
+                        Image(systemName: "star.fill")
+                            .foregroundColor(.yellow)
+                    }
                 }
             }
             .frame(width: 300, height: 150)
@@ -91,8 +98,12 @@ struct TestDateListView: View {
                     showReport = true
                 }
                 .disabled(selectedTDR == nil)
-              
-                
+
+                Button("Follow-up Report"){
+                    showFollowUpReport = true
+                }
+                .disabled(selectedTDR == nil)
+
             }
             .sheet(isPresented: $showReport, onDismiss: {
                 if let idx = tdList.firstIndex(where: { $0.id == selTDRec.id }) {
@@ -103,8 +114,18 @@ struct TestDateListView: View {
             })  {
                 PtReportView(theRec: $selTDRec)
             }
-            
-            
+
+            .sheet(isPresented: $showFollowUpReport, onDismiss: {
+                if let idx = tdList.firstIndex(where: { $0.id == selTDRec.id }) {
+                    tdList[idx] = selTDRec
+                }
+                selectedTDR = nil
+                tablesDisabled = false
+            })  {
+                PtFollowUpReportView(patient: $patient, theRec: $selTDRec)
+            }
+
+
             .sheet(isPresented: $showTD, onDismiss: {
                 if let idx = tdList.firstIndex(where: { $0.id == selTDRec.id }) {
                     tdList[idx] = selTDRec

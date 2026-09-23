@@ -2,17 +2,23 @@
 //  MacReportTemplateEditor.swift
 //  Spinal-Rehab
 //
-//  Created by Hari Dass Khalsa on 6/28/26.
-//
-//  Edits the performance-report body template stored in reports.thetext
-//  (row ReportDataClass.performanceReportID). The right pane renders the
-//  edited text through ReportRenderer with the same sample values as
-//  SpinalReportSlice, so token typos show up before the template is saved.
+//  Edits report body templates stored in reports.thetext: the single-visit
+//  Performance Report (row ReportDataClass.performanceReportID) and the
+//  multi-visit Follow-up Report (row ReportDataClass.followUpReportID). The
+//  right pane renders the edited text with each report's own sample values,
+//  so token typos show up before the template is saved.
 //
 
 import SwiftUI
 
+private enum ReportKind: String, CaseIterable, Identifiable {
+    case performance = "Performance Report"
+    case followUp = "Follow-up Report"
+    var id: String { rawValue }
+}
+
 struct MacReportTemplateEditor: View {
+    @State private var kind: ReportKind = .performance
     @State private var templateText: String = ""
     @State private var savedText: String = ""
     @State private var previewHTML: String = ""
@@ -21,11 +27,21 @@ struct MacReportTemplateEditor: View {
 
     @FocusState private var isEditorFocused: Bool
 
+    /// The known-token dict for whichever report is being edited. Both
+    /// reports' sample-value sets are keyed the same way per page, so the
+    /// first page's keys are the full set of tokens the renderer supplies.
+    private var knownTokens: [String: String] {
+        switch kind {
+        case .performance: return SpinalReportSlice.sampleValues
+        case .followUp: return FollowUpReportRenderer.sampleValues.first ?? [:]
+        }
+    }
+
     /// Tokens typed in the template that the report code doesn't supply.
     /// Saving is blocked while any exist, so a typo like {physican_name}
     /// can't end up printed in a patient report as "{Missing: ...}".
     private var unknownTokens: [String] {
-        let known = SpinalReportSlice.sampleValues
+        let known = knownTokens
         let tokens = ParsedTemplate(rawText: templateText).segments.compactMap { segment in
             if case .token(let key) = segment { return key }
             return nil
@@ -37,8 +53,13 @@ struct MacReportTemplateEditor: View {
         VStack(spacing: 0) {
             HStack {
                 Text("Report Template").font(.title2)
+                Picker("", selection: $kind) {
+                    ForEach(ReportKind.allCases) { Text($0.rawValue).tag($0) }
+                }
+                .labelsHidden()
+                .frame(width: 200)
                 Spacer()
-                Button("Restore Default") { templateText = ReportRenderer.bodyTemplate }
+                Button("Restore Default") { templateText = defaultTemplate }
                 Button("Revert") { templateText = savedText }
                     .disabled(templateText == savedText)
                 Button("Save") { Task { await save() } }
@@ -82,23 +103,51 @@ struct MacReportTemplateEditor: View {
         }
         .frame(minWidth: 800, minHeight: 600)
         .task {
-            templateText = await ReportDataClass.loadBodyTemplate()
-            savedText = templateText
-            isLoading = false
-            isEditorFocused = true
+            await load()
+        }
+        .onChange(of: kind) { _, _ in
+            Task {
+                isLoading = true
+                await load()
+            }
         }
         .task(id: templateText) {
             // Debounce so the web view isn't reloaded on every keystroke.
             try? await Task.sleep(for: .milliseconds(400))
             if Task.isCancelled { return }
-            previewHTML = ReportRenderer.fullHTML(template: templateText,
-                                                  values: SpinalReportSlice.sampleValues)
+            previewHTML = renderPreview()
         }
     }
 
+    private var defaultTemplate: String {
+        switch kind {
+        case .performance: return ReportRenderer.bodyTemplate
+        case .followUp: return FollowUpReportRenderer.bodyTemplate
+        }
+    }
+
+    private func renderPreview() -> String {
+        switch kind {
+        case .performance:
+            return ReportRenderer.fullHTML(template: templateText, values: SpinalReportSlice.sampleValues)
+        case .followUp:
+            return FollowUpReportRenderer.fullHTML(template: templateText, pages: FollowUpReportRenderer.sampleValues)
+        }
+    }
+
+    private func load() async {
+        switch kind {
+        case .performance: templateText = await ReportDataClass.loadBodyTemplate()
+        case .followUp: templateText = await ReportDataClass.loadFollowUpTemplate()
+        }
+        savedText = templateText
+        isLoading = false
+        isEditorFocused = true
+    }
+
     private func save() async {
-        let ok = await ReportDataClass.saveReportData(
-            reportID: ReportDataClass.performanceReportID, text: templateText)
+        let reportID = kind == .performance ? ReportDataClass.performanceReportID : ReportDataClass.followUpReportID
+        let ok = await ReportDataClass.saveReportData(reportID: reportID, text: templateText)
         if ok {
             savedText = templateText
             statusMessage = "Saved"

@@ -73,7 +73,7 @@ struct TestDateView: View {
                             VStack(alignment: .leading)
                             {
                                 Toggle("Cardio", isOn: $theRec.cardio)
-                                Toggle("Is Baseline", isOn: $theRec.is_baseline)
+                                Toggle("Start New Baseline Here", isOn: $theRec.is_baseline)
                             }
                             .frame(width: fWidth)
                         }.frame(width: 300, height: 125, alignment: .center )
