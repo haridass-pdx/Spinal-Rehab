@@ -76,6 +76,9 @@ struct TestDateData: Identifiable, Codable, Equatable, Hashable{
         self.recToDict()
         let tdC = testDateClass()
        id = await tdC.saveDictionary(dict: self.dataDict)
+        // Keeps dataDict["id"] in sync with the real post-insert id so a
+        // following deleteRec() targets the actual row, not id=0.
+        dataDict["id"]?.strVal = String(id)
     }
     
     

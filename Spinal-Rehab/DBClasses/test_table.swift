@@ -54,6 +54,10 @@ struct test_tableData: Identifiable, Equatable, Hashable {
         self.recToDict()
         let tdC = test_tableClass()
        id = await tdC.saveDictionary(dict: self.dataDict)
+        // No deleteRec() exists on this struct today, but keep dataDict["id"]
+        // in sync with the real post-insert id anyway — see the same fix in
+        // PatientGoal.swift/TestDateFile.swift/PatientRehabFile.swift.
+        dataDict["id"]?.strVal = String(id)
     }
     
     mutating func dictToRec(dict: DictListType)

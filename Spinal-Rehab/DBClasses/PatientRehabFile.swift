@@ -49,6 +49,10 @@ struct PatientRehabProgramData: Identifiable, Codable, Equatable, Hashable {
         recToDict()
         let prC = patient_rehab_programClass()
         id = await prC.saveDictionary(dict: dataDict)
+        // saveDictionary returns the new row's id on insert, but dataDict
+        // still holds the pre-save "0" — without this, deleteRec() called
+        // right after would target id=0 instead of the real row.
+        dataDict["id"]?.strVal = String(id)
     }
 
     /// Deletes the program and its patient_rehab_list rows.
@@ -175,6 +179,9 @@ struct PatientRehabListData: Identifiable, Codable, Equatable, Hashable {
         recToDict()
         let plC = patient_rehab_listClass()
         id = await plC.saveDictionary(dict: dataDict)
+        // See PatientRehabProgramData.saveRec — keeps dataDict["id"] in sync
+        // with the real post-insert id so a following deleteRec() is safe.
+        dataDict["id"]?.strVal = String(id)
     }
 
     func deleteRec() async {

@@ -38,11 +38,14 @@ struct Spinal_RehabApp: App {
 
 struct RootView: View {
     @StateObject private var globalData = globalDataRec()
+    @State private var isAuthenticated: Bool = false
 
     var body: some View {
         //      let _ = print("[RootView] body re-evaluating, loggedIn = \(globalData.loggedIn)")
         return Group {
-            if globalData.loggedIn {
+            if !isAuthenticated {
+                AuthenticateView(isAuthenticated: $isAuthenticated)
+            } else if globalData.loggedIn {
                 AppTabView()
             } else {
                 LogInIView()

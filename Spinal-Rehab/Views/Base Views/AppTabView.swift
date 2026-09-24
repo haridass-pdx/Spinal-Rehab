@@ -44,7 +44,13 @@ struct AppTabView: View {
                     .tabItem {
                         Label("Template", systemImage: "doc.text")
                     }
-
+            NavigationStack {
+                SettingsView()
+                    .navigationTitle("Settings")
+            }
+                    .tabItem {
+                        Label("Settings", systemImage: "gearshape")
+                    }
 
         }
     }
