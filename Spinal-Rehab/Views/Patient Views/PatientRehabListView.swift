@@ -149,7 +149,8 @@ struct PatientRehabListView: View {
         return PatientRehabItemEditView(item: item,
                                          exerciseName: exercise?.name ?? "Exercise \(item.exercise_id)",
                                          defaultReps: exercise?.def_reps ?? 0,
-                                         defaultSets: exercise?.def_sets ?? 0)
+                                         defaultSets: exercise?.def_sets ?? 0,
+                                         defaultHold: exercise?.def_hold ?? 0)
     }
 
     func load() async {
@@ -179,7 +180,7 @@ struct PatientRehabListView: View {
     }
 
     func repsSetsLabel(for item: PatientRehabListData) -> String {
-        "Reps: \(item.reps)  Sets: \(item.sets)"
+        "Reps: \(item.reps)  Sets: \(item.sets)  Hold: \(item.hold)"
     }
 
     /// Loads the exercise rows for the selected assigned program, along with
@@ -212,6 +213,7 @@ struct PatientRehabListView: View {
             var rec = items[index]
             rec.reps = exercise.def_reps
             rec.sets = exercise.def_sets
+            rec.hold = exercise.def_hold
             await rec.saveRec()
             items[index] = rec
         }
@@ -227,6 +229,7 @@ struct PatientRehabItemEditView: View {
     let exerciseName: String
     let defaultReps: Int
     let defaultSets: Int
+    let defaultHold: Int
     @Environment(\.dismiss) var dismiss
 
     var body: some View {
@@ -237,11 +240,13 @@ struct PatientRehabItemEditView: View {
             Form {
                 TextField("Reps", value: $item.reps, format: .number)
                 TextField("Sets", value: $item.sets, format: .number)
+                TextField("Hold", value: $item.hold, format: .number)
             }
 
-            Button("Reset to Defaults (\(defaultReps) reps / \(defaultSets) sets)") {
+            Button("Reset to Defaults (\(defaultReps) reps / \(defaultSets) sets / \(defaultHold) hold)") {
                 item.reps = defaultReps
                 item.sets = defaultSets
+                item.hold = defaultHold
             }
 
             HStack {

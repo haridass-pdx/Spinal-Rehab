@@ -13,10 +13,11 @@ struct ExerciseData: Identifiable, Codable, Equatable, Hashable {
     var description: String = ""
     var def_reps: Int = 0
     var def_sets: Int = 0
+    var def_hold: Int = 0
     var dataDict: DictListType = [:]
 
     enum CodingKeys: String, CodingKey {
-        case id, name, description, def_reps, def_sets
+        case id, name, description, def_reps, def_sets, def_hold
     }
 
     init() {
@@ -39,7 +40,8 @@ struct ExerciseData: Identifiable, Codable, Equatable, Hashable {
         lhs.name == rhs.name &&
         lhs.description == rhs.description &&
         lhs.def_reps == rhs.def_reps &&
-        lhs.def_sets == rhs.def_sets
+        lhs.def_sets == rhs.def_sets &&
+        lhs.def_hold == rhs.def_hold
     }
 
     func hash(into hasher: inout Hasher) {

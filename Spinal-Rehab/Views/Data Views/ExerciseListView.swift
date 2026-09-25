@@ -34,6 +34,7 @@ struct ExerciseListView: View {
                 TableColumn("Description", value: \.description)
                 TableColumn("Reps") { Text("\($0.def_reps)") }
                 TableColumn("Sets") { Text("\($0.def_sets)") }
+                TableColumn("Hold") { Text("\($0.def_hold)") }
             }
             .onChange(of: selected) {
                 if let id = $0, let rec = exerciseList.first(where: { $0.id == id }) {
@@ -90,6 +91,7 @@ struct ExerciseEditView: View {
                 HStack {
                     TextField("Default Reps", value: $exercise.def_reps, format: .number)
                     TextField("Default Sets", value: $exercise.def_sets, format: .number)
+                    TextField("Default Hold", value: $exercise.def_hold, format: .number)
                 }
             }
 

@@ -127,6 +127,7 @@ class patient_rehab_programClass: pgClientClass {
             if let exercise = await exC.getExercise(id: item.exercise_id) {
                 listRec.reps = exercise.def_reps
                 listRec.sets = exercise.def_sets
+                listRec.hold = exercise.def_hold
             }
             await listRec.saveRec()
         }
@@ -142,10 +143,11 @@ struct PatientRehabListData: Identifiable, Codable, Equatable, Hashable {
     var exercise_id: Int = 0
     var reps: Int = 0
     var sets: Int = 0
+    var hold: Int = 0
     var dataDict: DictListType = [:]
 
     enum CodingKeys: String, CodingKey {
-        case id, patient_rehab_id, exercise_id, reps, sets
+        case id, patient_rehab_id, exercise_id, reps, sets, hold
     }
 
     init() {
@@ -168,7 +170,8 @@ struct PatientRehabListData: Identifiable, Codable, Equatable, Hashable {
         lhs.patient_rehab_id == rhs.patient_rehab_id &&
         lhs.exercise_id == rhs.exercise_id &&
         lhs.reps == rhs.reps &&
-        lhs.sets == rhs.sets
+        lhs.sets == rhs.sets &&
+        lhs.hold == rhs.hold
     }
 
     func hash(into hasher: inout Hasher) {

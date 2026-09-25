@@ -20,7 +20,7 @@ enum RehabProgramReportRenderer {
         var rows = ""
         for item in items {
             guard let exercise = await exC.getExercise(id: item.exercise_id) else { continue }
-            rows += await exerciseRow(exercise: exercise, sets: exercise.def_sets, reps: exercise.def_reps)
+            rows += await exerciseRow(exercise: exercise, sets: exercise.def_sets, reps: exercise.def_reps, hold: exercise.def_hold)
         }
 
         let body = """
@@ -40,7 +40,7 @@ enum RehabProgramReportRenderer {
         var rows = ""
         for item in items {
             guard let exercise = await exC.getExercise(id: item.exercise_id) else { continue }
-            rows += await exerciseRow(exercise: exercise, sets: item.sets, reps: item.reps)
+            rows += await exerciseRow(exercise: exercise, sets: item.sets, reps: item.reps, hold: item.hold)
         }
 
         let dateStr = getDateOptString(from: patientProgram.prdate, formatStr: "MM/dd/yyyy")
@@ -57,7 +57,7 @@ enum RehabProgramReportRenderer {
     // can split mid-content across a page boundary. A block-level <div> does
     // not have this problem, so each exercise is one grid-row div rather than
     // a <table> row.
-    private static func exerciseRow(exercise: ExerciseData, sets: Int, reps: Int) async -> String {
+    private static func exerciseRow(exercise: ExerciseData, sets: Int, reps: Int, hold: Int) async -> String {
         let images = await exercise_imagesClass().buildImageList(exerciseId: exercise.id)
         let gallery = images
             .map { "<img src=\"data:image/jpeg;base64,\($0.image.base64EncodedString())\">" }
@@ -70,6 +70,7 @@ enum RehabProgramReportRenderer {
             <div class="c desc">\(htmlEscape(exercise.description))</div>
             <div class="c num">\(sets)</div>
             <div class="c num">\(reps)</div>
+            <div class="c num">\(hold)</div>
           </div>
           <div class="gallery">\(gallery)</div>
         </div>
@@ -84,6 +85,7 @@ enum RehabProgramReportRenderer {
             <div class="c">Description</div>
             <div class="c num">Sets</div>
             <div class="c num">Reps</div>
+            <div class="c num">Hold</div>
           </div>
           \(rows)
         </div>
@@ -103,7 +105,7 @@ enum RehabProgramReportRenderer {
     h1 { font-size: 15pt; margin: 0 0 10pt 0; }
     .patientline { font-size: 11pt; margin: 0 0 10pt 0; }
     .rehab { width: 100%; border: 1px solid #999; }
-    .row { display: grid; grid-template-columns: 18% 1fr 60px 60px; }
+    .row { display: grid; grid-template-columns: 18% 1fr 60px 60px 60px; }
     .row.hrow { background: #d9d9d9; font-weight: bold; }
     .c { padding: 6px 8px; text-align: left; }
     .c:nth-child(n+2) { border-left: 1px solid #999; }
